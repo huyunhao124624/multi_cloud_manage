@@ -1,0 +1,94 @@
+server:
+  port: 16666
+
+spring:
+  application:
+    name: turing
+  datasource:
+    druid:
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      username: root
+      password: zx124624
+      filters: stat,wall
+      url: jdbc:mysql://localhost:3306/multi_cloud_manage?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai&allowMultiQueries=true&useAffectedRows=true
+      stat-view-servlet:    # druid监控页面登陆账号（后期修改）
+        login-username: admin
+        login-password: turing-hewhprRcwch24m5R
+        enabled: true
+      web-stat-filter:
+        enabled: true
+  redis:
+    host: 127.0.0.1 # Redis 仓库地址（后期改本地环境）
+    database: 2            # 使用2号 redis 仓库
+    port: 6379             # Redis 仓库端口
+    password:
+  servlet:
+    multipart:           #设置文件上传大小
+      max-file-size: 1024MB
+      max-request-size: 1024MB
+  mail:
+    host: smtp.qq.com
+    username: 2640558211@qq.com
+    password: ffhlgkdzfzovecee
+    properties.mail.smtp.port: 465 #端口号465或587
+    from: 2640558211@qq.com # 发送邮件的地址，和上面username一致
+    properties:
+      mail:
+        smtp:
+          starttls:
+            enable: true
+            required: true
+          ssl:
+            enable: true
+      default-encoding: utf-8
+
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true # mybatis自动下换线转小驼峰
+    use-generated-keys: true #mybatisz插入自增主键返回
+  mapper-locations: classpath:mapper/*.xml  # mapper路径配置
+
+logging:              # 开发使用，对dao层数据库访问进行详细记录（后期删除）
+  level:
+    com:
+      ai:
+      turing:
+        dao: debug
+  path:
+    /etc/jupyterhub/log/
+
+
+security:
+  jwtDefaultExp: 99999999   # 登陆token默认有效时长
+
+
+file:
+  uploadPath: D:\\test\\  #文件上传位置
+  prefixURL: http://127.0.0.1/file/
+
+
+rest:
+  connection:
+    timeout: 3000
+  read:
+    timeout: 5000
+
+backend:
+  url:
+    http://127.0.0.1
+
+jupyterhub:
+  loginUrl: http://172.17.0.1/jupyter2/hub/login
+  baseUrl: http://127.0.0.1:8000/jupyter2/hub/api/
+  resultBaseUrl: http://172.17.0.1/jupyter2/user/
+  fileBasePath: /home/
+  adminToken: token c243d82ed46a46f4b80a3327900d3205
+  queryParam: ?User_info=
+  taskFileBaseUrl: http://172.17.0.1/static/task/
+  taskFileBasePath: /nginx/task/
+  fileServerUrl: 172.17.0.1
+  tempZipPath: /nginx/zip/
+  selfJavaJupyterUrl: http://172.17.0.3:9999
+  notebookShutdownTime: 1200000
+  sceduleFixedRate: 1200000
+

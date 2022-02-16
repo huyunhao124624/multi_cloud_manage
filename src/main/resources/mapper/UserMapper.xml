@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hyh.netdev.dao.UserMapper">
+    <resultMap id="BaseResultMap" type="com.hyh.netdev.entity.User">
+        <!--@mbg.generated-->
+        <id column="user_id" jdbcType="INTEGER" property="userId"/>
+        <result column="avatar" jdbcType="VARCHAR" property="avatar"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="sex" jdbcType="INTEGER" property="sex"/>
+        <result column="account" jdbcType="VARCHAR" property="account"/>
+        <result column="profess" jdbcType="VARCHAR" property="profess"/>
+        <result column="phone" jdbcType="VARCHAR" property="phone"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        <!--@mbg.generated-->
+        user_id, avatar, `name`, sex, account, profess, phone
+    </sql>
+    <select id="selectByAccount" resultMap="BaseResultMap">
+        SELECT user_id
+        FROM user
+        WHERE account = #{account,jdbcType=VARCHAR}
+        LIMIT 1
+    </select>
+
+    <update id="updateInformationSelf">
+        UPDATE user
+        <set>
+            <if test="avatar != null and avatar != ''">avatar = #{avatar,jdbcType=VARCHAR} ,</if>
+            <if test="sex != null">sex = #{sex,jdbcType=INTEGER} ,</if>
+            <if test="phone != null and phone != ''">phone = #{phone,jdbcType=VARCHAR} ,</if>
+        </set>
+        WHERE user_id = #{userId,jdbcType=INTEGER}
+    </update>
+    <update id="updateInformationAdmin">
+        UPDATE user
+        <set>
+            <if test="name != null and name != ''">name = #{name,jdbcType=VARCHAR} ,</if>
+            <if test="profess != null and profess != ''">profess = #{profess,jdbcType=VARCHAR} ,</if>
+        </set>
+        WHERE account =#{account,jdbcType=VARCHAR}
+    </update>
+    <select id="selectTeacherProfessList" resultMap="BaseResultMap">
+        SELECT DISTINCT profess
+        FROM user
+        WHERE profess IS NOT NULL
+    </select>
+    <select id="selectTeacher" resultMap="BaseResultMap">
+        SELECT user_id,name,account,profess FROM user
+        WHERE 1 = 1 AND profess IS NOT NULL
+        <if test="user.profess != null and user.profess != ''">AND profess = #{user.profess,jdbcType=VARCHAR}</if>
+        <if test="user.name != null and user.name != ''">AND name LIKE CONCAT(CONCAT('%',#{user.name}),'%')</if>
+        <if test="pageLimit.page != null and pageLimit.limit != null">
+            <bind name="offset" value="(pageLimit.page - 1) * pageLimit.limit"/>
+            LIMIT #{offset,jdbcType=INTEGER} ,#{pageLimit.limit,jdbcType=INTEGER}
+        </if>
+    </select>
+
+</mapper>
