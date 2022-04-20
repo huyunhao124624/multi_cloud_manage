@@ -3,6 +3,8 @@ package com.hyh.netdev.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.hyh.netdev.bo.*;
 import com.hyh.netdev.constant.ResultConstant;
@@ -12,6 +14,8 @@ import com.hyh.netdev.security.util.RedisUtil;
 import com.hyh.netdev.service.SecurityService;
 import com.hyh.netdev.service.UserEmailService;
 import com.hyh.netdev.service.UserService;
+import com.hyh.netdev.vo.MPage;
+import com.hyh.netdev.vo.PageLimit;
 import com.hyh.netdev.vo.Result;
 import com.hyh.netdev.vo.UserInformation;
 import lombok.AllArgsConstructor;
@@ -22,6 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -30,10 +35,7 @@ import javax.imageio.ImageIO;
 import javax.imageio.stream.ImageInputStream;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * @author hyh
@@ -222,7 +224,43 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         return new Result(activateAccountBo);
     }
 
+    @Override
+    public Result<MenuUserInfoBo> getMenuUserInfo(Integer userId) {
+        User user = userMapper.selectById(userId);
+        UserRole userRole = userRoleMapper.selectById(userId);
+        MenuUserInfoBo userInfoBo = new MenuUserInfoBo();
+        userInfoBo.setAvatar(user.getAvatar());
 
+        userInfoBo.setName(user.getName());
+        List<String> roles = new ArrayList<>();
+        roles.add(userRole.getRoleId()+"");
+        userInfoBo.setRoles(roles);
+        return new Result<>(userInfoBo);
+    }
+
+    @Override
+    public Result<MPage<GetAccountListBo>> getAccountList(PageLimit pageLimit) {
+        Page page = new Page<User>(pageLimit.getPage(), pageLimit.getLimit());
+
+        Integer total = userMapper.selectCount(new QueryWrapper<>());
+
+        IPage<User> iPage = userMapper.selectPage(page, new QueryWrapper<>());
+
+        List<User> rawList = iPage.getRecords();
+
+        List<GetAccountListBo> resultList = new ArrayList<>();
+        rawList.forEach((usr)->{
+            GetAccountListBo tempBo = new GetAccountListBo();
+            tempBo.setAccount(usr.getAccount());
+            tempBo.setUserId(usr.getUserId()+"");
+            tempBo.setName(usr.getName());
+            resultList.add(tempBo);
+        });
+
+        MPage mPage = new MPage(total,resultList);
+
+        return new Result<>(mPage);
+    }
 
 
 }

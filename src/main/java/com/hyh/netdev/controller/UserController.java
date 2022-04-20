@@ -1,10 +1,14 @@
 package com.hyh.netdev.controller;
 
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.hyh.netdev.bo.*;
+import com.hyh.netdev.dto.GetAccountListDto;
 import com.hyh.netdev.entity.UserRole;
 import com.hyh.netdev.service.UserRoleService;
 import com.hyh.netdev.service.UserService;
+import com.hyh.netdev.vo.MPage;
+import com.hyh.netdev.vo.PageLimit;
 import com.hyh.netdev.vo.Result;
 import lombok.AllArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -40,10 +44,17 @@ public class UserController {
         return userRoleService.updatePasswordAdmin(Integer.parseInt(token.getName()), newData);
     }
 
+
     @PostMapping("/api/user/login")
     public Result<UserLoginResultBo> login(@RequestBody UserLoginBo userLoginBo) {
         return userService.login(userLoginBo);
     }
+
+    @GetMapping("/api/user/getMenuUserInfo")
+    public Result<MenuUserInfoBo> getMenuUserInfo(UsernamePasswordAuthenticationToken token){
+        return userService.getMenuUserInfo(Integer.parseInt(token.getName()));
+    }
+
 
 
 
@@ -64,6 +75,13 @@ public class UserController {
     public Result<ActivateAccountBo> activateAccount(@RequestParam("token") String token){
         return userService.activateAccount(token);
     }
+
+    @PostMapping("/api/user/getAccountList")
+    public Result<MPage<GetAccountListBo>> getAccountList(@RequestBody GetAccountListDto requestDto){
+        PageLimit pageLimit  = new PageLimit(requestDto.getPage(),requestDto.getLimit());
+        return userService.getAccountList(pageLimit);
+    }
+
 
 
 

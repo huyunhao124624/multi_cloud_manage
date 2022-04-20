@@ -3,7 +3,7 @@ package com.hyh.netdev.security;
 import org.springframework.security.core.GrantedAuthority;
 
 /**
- * @author Albumen
+ * @author hyh
  */
 public class GrantedAuthorityImpl implements GrantedAuthority {
     private String authority;

@@ -33,7 +33,7 @@ import java.util.Scanner;
 /**
  * 认证状态检测
  *
- * @author Albumen
+ * @author hyh
  */
 public class CustomAuthenticationFilter extends BasicAuthenticationFilter {
     private final static Logger logger = LoggerFactory.getLogger(CustomAuthenticationFilter.class);

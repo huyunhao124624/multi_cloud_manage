@@ -15,7 +15,7 @@ import java.io.IOException;
 /**
  * 登陆错误
  *
- * @author Albumen
+ * @author hyh
  */
 @Component
 public class CustomAccessDeniedHandler implements AccessDeniedHandler {

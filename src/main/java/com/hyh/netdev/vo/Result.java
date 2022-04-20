@@ -20,7 +20,7 @@ public class Result<T> {
     }
 
     public Result(T data) {
-        this.code = 0;
+        this.code = 20000;
         this.msg = "ok";
         this.data = data;
     }
