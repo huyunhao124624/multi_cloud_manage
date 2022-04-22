@@ -9,6 +9,8 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.hyh.netdev.bo.*;
 import com.hyh.netdev.constant.ResultConstant;
 import com.hyh.netdev.dao.*;
+import com.hyh.netdev.dto.AddAccountDto;
+import com.hyh.netdev.dto.UpdateAccountDto;
 import com.hyh.netdev.entity.*;
 import com.hyh.netdev.security.util.RedisUtil;
 import com.hyh.netdev.service.SecurityService;
@@ -18,6 +20,7 @@ import com.hyh.netdev.vo.MPage;
 import com.hyh.netdev.vo.PageLimit;
 import com.hyh.netdev.vo.Result;
 import com.hyh.netdev.vo.UserInformation;
+import io.netty.util.internal.ObjectUtil;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -65,6 +68,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @NonNull
     private RedisUtil redisUtil;
 
+    @NonNull
+    private DepartmentUserMapper departmentUserMapper;
+
 
 
 
@@ -101,10 +107,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         }
 
         // 2.1判断用户是否激活
-        UserEmail userEmail = userEmailMapper.selectOne(new QueryWrapper<UserEmail>().eq("user_id",user.getUserId()));
-        if(userEmail.getActivateStatus() == 0){
-            return ResultConstant.USER_NOT_ACTIVATED;
-        }
+//        UserEmail userEmail = userEmailMapper.selectOne(new QueryWrapper<UserEmail>().eq("user_id",user.getUserId()));
+//        if(userEmail.getActivateStatus() == 0){
+//            return ResultConstant.USER_NOT_ACTIVATED;
+//        }
 
         // 3、查询账号角色信息
         UserRole userRole = userRoleMapper.selectById(user.getUserId());
@@ -251,15 +257,78 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         List<GetAccountListBo> resultList = new ArrayList<>();
         rawList.forEach((usr)->{
             GetAccountListBo tempBo = new GetAccountListBo();
+            QueryWrapper<UserRole> userRoleCondition = new QueryWrapper<>();
+
+            UserRole userRole = userRoleMapper.selectOne(new QueryWrapper<UserRole>().eq("user_id", usr.getUserId()));
+
+            DepartmentUser departmentUser = departmentUserMapper.selectOne(new QueryWrapper<DepartmentUser>().eq("user_id",usr.getUserId()));
+
+            if(departmentUser != null) {
+                tempBo.setDepartmentId(departmentUser.getDepartmentId() + "");
+            }
+            tempBo.setRoleId(userRole.getRoleId()+"");
+
+
             tempBo.setAccount(usr.getAccount());
             tempBo.setUserId(usr.getUserId()+"");
-            tempBo.setName(usr.getName());
+            tempBo.setUserName(usr.getName());
             resultList.add(tempBo);
         });
 
         MPage mPage = new MPage(total,resultList);
 
         return new Result<>(mPage);
+    }
+
+    @Override
+    @Transactional
+    public Result updateAccount(UpdateAccountDto requestDto) {
+        User user = new User();
+        Integer userId = requestDto.getUserId();
+        user.setAccount(requestDto.getAccount());
+        user.setUserId(requestDto.getUserId());
+        user.setName(requestDto.getUserName());
+        userMapper.updateById(user);
+
+        UserRole userRole = userRoleMapper.selectOne(new QueryWrapper<UserRole>().eq("user_id",userId));
+        userRole.setPassword(requestDto.getPassword());
+        userRole.setRoleId(requestDto.getRoleId());
+        userRoleMapper.update(userRole,new UpdateWrapper<UserRole>().eq("user_id",userId));
+
+        DepartmentUser departmentUser = departmentUserMapper.selectOne(new QueryWrapper<DepartmentUser>().eq("user_id",userId));
+        if(departmentUser != null){
+            departmentUser.setDepartmentId(requestDto.getDepartmentId());
+            departmentUserMapper.update(departmentUser,new UpdateWrapper<DepartmentUser>().eq("user_id",userId));
+        }else{
+            departmentUser = new DepartmentUser();
+            departmentUser.setDepartmentId(requestDto.getDepartmentId());
+            departmentUser.setUserId(userId);
+            departmentUserMapper.insert(departmentUser);
+        }
+
+        return ResultConstant.SUCCESS;
+    }
+
+    @Override
+    public Result addAccount(AddAccountDto requestDto) {
+        User user = new User();
+        user.setName(requestDto.getUserName());
+        user.setAccount(requestDto.getAccount());
+        userMapper.insert(user);
+        Integer userId = user.getUserId();
+
+        UserRole userRole = new UserRole();
+        userRole.setPassword(requestDto.getPassword());
+        userRole.setUserId(userId);
+        userRole.setRoleId(requestDto.getRoleId());
+        userRoleMapper.insert(userRole);
+
+        DepartmentUser departmentUser = new DepartmentUser();
+        departmentUser.setUserId(userId);
+        departmentUser.setDepartmentId(requestDto.getDepartmentId());
+        departmentUserMapper.insert(departmentUser);
+
+        return ResultConstant.SUCCESS;
     }
 
 

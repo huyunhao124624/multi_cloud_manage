@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hyh.netdev.dao.ResourcePoolMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.hyh.netdev.entity.ResourcePool">
+        <result column="cpu_limit" property="cpuLimit" />
+        <result column="memory_limit" property="memoryLimit" />
+        <result column="cpu_used" property="cpuUsed" />
+        <result column="memory_used" property="memoryUsed" />
+        <result column="disk_used" property="diskUsed" />
+        <result column="disk_limit" property="diskLimit" />
+        <result column="resource_pool_id" property="resourcePoolId" />
+        <result column="department_id" property="departmentId" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        cpu_limit, memory_limit, cpu_used, memory_used, disk_used, disk_limit, resource_pool_id, department_id
+    </sql>
+
+</mapper>

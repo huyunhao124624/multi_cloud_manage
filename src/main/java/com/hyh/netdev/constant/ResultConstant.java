@@ -11,7 +11,7 @@ import com.hyh.netdev.vo.Result;
  */
 public class ResultConstant {
     public final static Result SYSTEM_ERROR = new Result<>(-1, "系统错误");
-    public final static Result SUCCESS = new Result<>(0, "ok");
+    public final static Result SUCCESS = new Result<>(20000, "ok");
     public final static Result TOKEN_EXPIRE = new Result<>(1001, "登陆密钥无效");
     public final static Result ARGS_ERROR = new Result<>(1002, "参数错误");
     public final static Result PERMISSION_ERROR = new Result<>(1003, "权限不足");

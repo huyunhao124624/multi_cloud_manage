@@ -3,7 +3,9 @@ package com.hyh.netdev.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.hyh.netdev.bo.*;
+import com.hyh.netdev.dto.AddAccountDto;
 import com.hyh.netdev.dto.GetAccountListDto;
+import com.hyh.netdev.dto.UpdateAccountDto;
 import com.hyh.netdev.entity.UserRole;
 import com.hyh.netdev.service.UserRoleService;
 import com.hyh.netdev.service.UserService;
@@ -81,6 +83,17 @@ public class UserController {
         PageLimit pageLimit  = new PageLimit(requestDto.getPage(),requestDto.getLimit());
         return userService.getAccountList(pageLimit);
     }
+
+    @PostMapping("/api/user/updateAccount")
+    public Result updateAccount(@RequestBody UpdateAccountDto requestDto){
+        return userService.updateAccount(requestDto);
+    }
+
+    @PostMapping("/api/user/addAccount")
+    public Result addAccount(@RequestBody AddAccountDto requestDto){
+        return userService.addAccount(requestDto);
+    }
+
 
 
 

@@ -4,6 +4,8 @@ package com.hyh.netdev.service;
 import com.baomidou.mybatisplus.core.conditions.update.Update;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.hyh.netdev.bo.*;
+import com.hyh.netdev.dto.AddAccountDto;
+import com.hyh.netdev.dto.UpdateAccountDto;
 import com.hyh.netdev.entity.User;
 import com.hyh.netdev.vo.MPage;
 import com.hyh.netdev.vo.PageLimit;
@@ -56,5 +58,9 @@ public interface UserService extends IService<User> {
     Result<MenuUserInfoBo> getMenuUserInfo(Integer userId);
 
     Result<MPage<GetAccountListBo>> getAccountList(PageLimit pageLimit);
+
+    Result updateAccount(UpdateAccountDto requestDto);
+
+    Result addAccount(AddAccountDto requestDto);
 
 }
