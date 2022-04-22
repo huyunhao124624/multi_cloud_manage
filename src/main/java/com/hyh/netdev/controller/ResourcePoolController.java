@@ -1,8 +1,9 @@
 package com.hyh.netdev.controller;
 
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.hyh.netdev.bo.GetAllResourcePoolBo;
+import com.hyh.netdev.bo.resourcePool.GetAllResourcePoolBo;
+import com.hyh.netdev.bo.resourcePool.GetAllResourcePoolTypeBo;
 import com.hyh.netdev.dto.GetAllResourcePoolListDto;
+import com.hyh.netdev.dto.UpdateResourcePoolDto;
 import com.hyh.netdev.service.ResourcePoolService;
 import com.hyh.netdev.vo.MPage;
 import com.hyh.netdev.vo.PageLimit;
@@ -28,6 +29,16 @@ public class ResourcePoolController {
     public Result<MPage<GetAllResourcePoolBo>> getAllResourcePoolList(@RequestBody GetAllResourcePoolListDto requestDto){
         PageLimit pageLimit = new PageLimit(requestDto.getPage(),requestDto.getLimit());
         return resourcePoolService.getAllResourcePoolList(pageLimit);
+    }
+
+    @PostMapping("/api/resourcePool/getAllResourcePoolTypeList")
+    public Result<List<GetAllResourcePoolTypeBo>> getAllResourcePoolType(){
+        return resourcePoolService.getAllResourcePoolTypeList();
+    }
+
+    @PostMapping("/api/resourcePool/updateResourcePool")
+    public Result updateResourcePool(@RequestBody UpdateResourcePoolDto requestDto){
+        return resourcePoolService.updateResourcePoolType(requestDto);
     }
 
 }

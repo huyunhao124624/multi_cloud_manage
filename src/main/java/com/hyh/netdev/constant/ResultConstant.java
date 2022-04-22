@@ -24,6 +24,7 @@ public class ResultConstant {
     public final static Result PRODUCT_UPDATE_ERROR = new Result<>(3000,"商品上传或更新失败");
     public final static Result EMAIL_USED = new Result<>(2010,"邮箱已被使用");
     public final static Result USER_NOT_ACTIVATED = new Result<>(2011,"用户还没有激活账号，请到邮箱去激活");
+    public final static Result DEPARTMENT_EXIST_RESOURCE_POOL = new Result<>(3000,"部门已使用资源池");
 
 
 

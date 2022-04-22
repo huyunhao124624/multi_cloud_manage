@@ -1,4 +1,4 @@
-package com.hyh.netdev.bo;
+package com.hyh.netdev.bo.resourcePool;
 
 import lombok.Data;
 
