@@ -11,6 +11,7 @@ import com.hyh.netdev.constant.ResultConstant;
 import com.hyh.netdev.dao.DepartmentMapper;
 import com.hyh.netdev.dao.ResourcePoolMapper;
 import com.hyh.netdev.dto.AddResourcePoolTypeDto;
+import com.hyh.netdev.dto.DeleteResourcePoolDto;
 import com.hyh.netdev.dto.UpdateResourcePoolDto;
 import com.hyh.netdev.entity.Department;
 import com.hyh.netdev.entity.ResourcePool;
@@ -114,7 +115,7 @@ public class ResourcePoolServiceImpl extends ServiceImpl<ResourcePoolMapper, Res
         resourcePool.setResourcePoolType(resourcePool.getResourcePoolType());
         Long departmentId = resourcePool.getDepartmentId();
         ResourcePool resExist = resourcePoolMapper.selectOne(new QueryWrapper<ResourcePool>().eq("department_id", departmentId));
-        if(resourcePool != null){
+        if(resExist != null){
             return ResultConstant.DEPARTMENT_EXIST_RESOURCE_POOL;
         }
         resourcePool.setResourcePoolType(requestDto.getResourceTypeCode());
@@ -122,6 +123,12 @@ public class ResourcePoolServiceImpl extends ServiceImpl<ResourcePoolMapper, Res
         resourcePool.setMemoryLimit(requestDto.getMemoryLimit());
         resourcePool.setDiskLimit(requestDto.getDiskLimit());
 
+        return ResultConstant.SUCCESS;
+    }
+
+    @Override
+    public Result deleteResourcePool(DeleteResourcePoolDto requestDto) {
+        resourcePoolMapper.deleteById(requestDto.getResourcePoolId());
         return ResultConstant.SUCCESS;
     }
 }

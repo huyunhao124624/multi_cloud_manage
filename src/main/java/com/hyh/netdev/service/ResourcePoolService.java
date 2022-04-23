@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.hyh.netdev.bo.resourcePool.GetAllResourcePoolBo;
 import com.hyh.netdev.bo.resourcePool.GetAllResourcePoolTypeBo;
 import com.hyh.netdev.dto.AddResourcePoolTypeDto;
+import com.hyh.netdev.dto.DeleteResourcePoolDto;
 import com.hyh.netdev.dto.UpdateResourcePoolDto;
 import com.hyh.netdev.entity.ResourcePool;
 import com.hyh.netdev.vo.MPage;
@@ -25,4 +26,5 @@ public interface ResourcePoolService extends IService<ResourcePool> {
     public Result<List<GetAllResourcePoolTypeBo>> getAllResourcePoolTypeList();
     public Result updateResourcePoolType(UpdateResourcePoolDto requestDto);
     public Result addResourcePoolType(AddResourcePoolTypeDto requestDto);
+    public Result deleteResourcePool(DeleteResourcePoolDto requestDto);
 }

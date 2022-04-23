@@ -2,6 +2,8 @@ package com.hyh.netdev.controller;
 
 import com.hyh.netdev.bo.resourcePool.GetAllResourcePoolBo;
 import com.hyh.netdev.bo.resourcePool.GetAllResourcePoolTypeBo;
+import com.hyh.netdev.dto.AddResourcePoolTypeDto;
+import com.hyh.netdev.dto.DeleteResourcePoolDto;
 import com.hyh.netdev.dto.GetAllResourcePoolListDto;
 import com.hyh.netdev.dto.UpdateResourcePoolDto;
 import com.hyh.netdev.service.ResourcePoolService;
@@ -39,6 +41,16 @@ public class ResourcePoolController {
     @PostMapping("/api/resourcePool/updateResourcePool")
     public Result updateResourcePool(@RequestBody UpdateResourcePoolDto requestDto){
         return resourcePoolService.updateResourcePoolType(requestDto);
+    }
+
+    @PostMapping("/api/resourcePool/addResourcePool")
+    public Result addResourcePool(@RequestBody AddResourcePoolTypeDto requestDto){
+        return resourcePoolService.addResourcePoolType(requestDto);
+    }
+
+    @PostMapping("/api/resourcePool/deleteResourcePoolById")
+    public Result deleteResourcePoolById(@RequestBody DeleteResourcePoolDto requestDto){
+        return resourcePoolService.deleteResourcePool(requestDto);
     }
 
 }
