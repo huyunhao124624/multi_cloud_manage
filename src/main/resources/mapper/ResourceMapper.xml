@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hyh.netdev.dao.ResourceMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.hyh.netdev.entity.Resource">
+        <id column="resource_id" property="resourceId" />
+        <result column="user_id" property="userId" />
+        <result column="vm_meta_id" property="vmMetaId" />
+        <result column="disk_meta_id" property="diskMetaId" />
+        <result column="department_id" property="departmentId" />
+        <result column="path_uuid" property="pathUuid" />
+        <result column="create_time" property="createTime" />
+        <result column="release_time" property="releaseTime" />
+        <result column="is_delete" property="isDelete" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        resource_id, user_id, vm_meta_id, disk_meta_id, department_id, path_uuid, create_time, release_time, is_delete
+    </sql>
+
+</mapper>

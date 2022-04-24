@@ -77,18 +77,8 @@ backend:
   url:
     http://127.0.0.1
 
-jupyterhub:
-  loginUrl: http://172.17.0.1/jupyter2/hub/login
-  baseUrl: http://127.0.0.1:8000/jupyter2/hub/api/
-  resultBaseUrl: http://172.17.0.1/jupyter2/user/
-  fileBasePath: /home/
-  adminToken: token c243d82ed46a46f4b80a3327900d3205
-  queryParam: ?User_info=
-  taskFileBaseUrl: http://172.17.0.1/static/task/
-  taskFileBasePath: /nginx/task/
-  fileServerUrl: 172.17.0.1
-  tempZipPath: /nginx/zip/
-  selfJavaJupyterUrl: http://172.17.0.3:9999
-  notebookShutdownTime: 1200000
-  sceduleFixedRate: 1200000
+terraform:
+  tempPath: D:\\code\\multi_terraform_space
+
+
 
