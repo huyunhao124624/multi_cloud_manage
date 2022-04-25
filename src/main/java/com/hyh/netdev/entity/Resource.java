@@ -62,6 +62,9 @@ public class Resource extends Model<Resource> {
     @TableField("cloud_provider")
     private String cloudProvider;
 
+    @TableField("resource_type")
+    private String resourceType;
+
 
     @Override
     protected Serializable pkVal() {

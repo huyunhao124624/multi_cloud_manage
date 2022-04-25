@@ -23,5 +23,5 @@ public class DepartmentUser {
     private Integer userId;
 
     @TableField("department_id")
-    private String departmentId;
+    private Long departmentId;
 }

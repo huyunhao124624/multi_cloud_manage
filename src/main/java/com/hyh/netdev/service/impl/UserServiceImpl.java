@@ -12,6 +12,7 @@ import com.hyh.netdev.dao.*;
 import com.hyh.netdev.dto.AddAccountDto;
 import com.hyh.netdev.dto.UpdateAccountDto;
 import com.hyh.netdev.entity.*;
+import com.hyh.netdev.enums.RoleEnum;
 import com.hyh.netdev.security.util.RedisUtil;
 import com.hyh.netdev.service.SecurityService;
 import com.hyh.netdev.service.UserEmailService;
@@ -25,6 +26,7 @@ import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import net.coobird.thumbnailator.Thumbnails;
+import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -34,6 +36,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.annotation.PostConstruct;
 import javax.imageio.ImageIO;
 import javax.imageio.stream.ImageInputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -60,6 +63,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     private UserRoleMapper userRoleMapper;
 
     @NonNull
+    private RoleMapper roleMapper;
+
+    @NonNull
     private RolePermissionMapper rolePermissionMapper;
     @NonNull
     private PermissionMapper permissionMapper;
@@ -70,6 +76,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @NonNull
     private DepartmentUserMapper departmentUserMapper;
+
+    @NonNull
+    private DepartmentMapper departmentMapper;
 
 
 
@@ -82,13 +91,19 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Value("${backend.url}")
     private String backendUrl;
 
+    private static Map<Integer,String> roleMap = null;
 
 
 
+    @PostConstruct
+    public void initMap(){
+        roleMap = new HashMap<>();
+        List<Role> roleList = roleMapper.selectList(new QueryWrapper<>());
+        roleList.forEach((role)->{
+            roleMap.put(role.getRoleId(),role.getName());
+        });
 
-
-
-
+    }
 
 
 
@@ -262,11 +277,21 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             UserRole userRole = userRoleMapper.selectOne(new QueryWrapper<UserRole>().eq("user_id", usr.getUserId()));
 
             DepartmentUser departmentUser = departmentUserMapper.selectOne(new QueryWrapper<DepartmentUser>().eq("user_id",usr.getUserId()));
+            Long departmentId = departmentUser.getDepartmentId();
+            Department department = departmentMapper.selectById(departmentId);
 
-            if(departmentUser != null) {
-                tempBo.setDepartmentId(departmentUser.getDepartmentId() + "");
+            if(departmentUser != null && department != null) {
+                tempBo.setDepartmentId(departmentId + "");
+                tempBo.setDepartmentName(department.getDepartmentName());
             }
-            tempBo.setRoleId(userRole.getRoleId()+"");
+
+            Integer roleId = userRole.getRoleId();
+            if(RoleEnum.ADMIN.getCode().equals(roleId)){
+                return;
+            }
+
+            tempBo.setRoleId(roleId+"");
+            tempBo.setRoleName(roleMap.get(roleId));
 
 
             tempBo.setAccount(usr.getAccount());
@@ -311,6 +336,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Override
     public Result addAccount(AddAccountDto requestDto) {
+
+        List<User> existUserList = userMapper.selectList(new QueryWrapper<User>().eq("account",requestDto.getAccount()));
+        if(!CollectionUtils.isEmpty(existUserList)){
+            return ResultConstant.ACCOUNT_ALLOCATED;
+        }
+
         User user = new User();
         user.setName(requestDto.getUserName());
         user.setAccount(requestDto.getAccount());

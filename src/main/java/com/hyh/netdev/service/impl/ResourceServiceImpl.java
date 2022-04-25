@@ -6,7 +6,7 @@ import com.hyh.netdev.constant.ResultConstant;
 import com.hyh.netdev.dao.DiskMetaMapper;
 import com.hyh.netdev.dao.ResourceMapper;
 import com.hyh.netdev.dao.VmMetaMapper;
-import com.hyh.netdev.dto.ApplyPrivateResourceDto;
+import com.hyh.netdev.dto.ApplyResourceDto;
 import com.hyh.netdev.entity.DiskMeta;
 import com.hyh.netdev.entity.Resource;
 import com.hyh.netdev.entity.VmMeta;
@@ -54,7 +54,7 @@ public class ResourceServiceImpl implements ResourceService {
 
 
     @Override
-    public Result applyPrivateResource(ApplyPrivateResourceDto requestDto, Integer userId, Long departmentId) throws IOException {
+    public Result applyPrivateResource(ApplyResourceDto requestDto, Integer userId, Long departmentId) throws IOException {
         Integer cpuNum = requestDto.getCpuNum();
         Integer memorySize = requestDto.getMemorySize();
         Integer diskSize = requestDto.getDiskSize();
