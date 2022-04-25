@@ -8,6 +8,7 @@ import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.Date;
 
 /**
  * <p>
@@ -26,34 +27,40 @@ public class Resource extends Model<Resource> {
     private static final long serialVersionUID = 1L;
 
     @TableId(value = "resource_id", type = IdType.AUTO)
-    private Integer resourceId;
+    private Long resourceId;
 
     @TableField("user_id")
     private Integer userId;
 
     @TableField("vm_meta_id")
-    private Integer vmMetaId;
+    private Long vmMetaId;
 
     @TableField("disk_meta_id")
-    private Integer diskMetaId;
+    private Long diskMetaId;
 
     @TableField("department_id")
-    private Integer departmentId;
+    private Long departmentId;
 
     @TableField("path_uuid")
     private String pathUuid;
 
-    @TableField(value = "create_time", fill = FieldFill.INSERT)
-    private LocalDateTime createTime;
+    @TableField(value = "create_time")
+    private Date createTime;
 
     @TableField("release_time")
-    private LocalDateTime releaseTime;
+    private Date releaseTime;
 
     @TableField("is_delete")
-    private Integer isDelete;
+    private String isDelete;
 
     @TableField("public_ip")
     private String publicIp;
+
+    @TableField("resource_status")
+    private String resourceStatus;
+
+    @TableField("cloud_provider")
+    private String cloudProvider;
 
 
     @Override

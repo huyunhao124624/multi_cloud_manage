@@ -73,8 +73,8 @@ resource "aws_eip" "${awsEipName}" {
 }
 
 resource "aws_eip_association" "${awsEipAssociationName}" {
-  instance_id   = aws_instance.${awsInstanceName}
-  allocation_id = aws_eip.%s.id
+  instance_id   = aws_instance.${awsInstanceName}.id
+  allocation_id = aws_eip.${awsEipName}.id
 }
 
 resource "aws_instance" "${awsInstanceName}" {
@@ -98,7 +98,7 @@ resource "aws_instance" "${awsInstanceName}" {
 }
 
 output "aws_public_ip" {
-  value = aws_eip_association.eip_assoc.public_ip
+  value = aws_eip_association.${awsEipAssociationName}.public_ip
 }
 
 

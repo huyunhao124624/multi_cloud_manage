@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hyh.netdev.dao.DiskMetaMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.hyh.netdev.entity.DiskMeta">
+        <id column="disk_meta_id" property="diskMetaId" />
+        <result column="gbprice_per_hour" property="gbpricePerHour" />
+        <result column="gbprice_per_month" property="gbpricePerMonth" />
+        <result column="gbprice_per_week" property="gbpricePerWeek" />
+        <result column="provider" property="provider" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        disk_meta_id, gbprice_per_hour, gbprice_per_month, gbprice_per_week, provider
+    </sql>
+
+</mapper>

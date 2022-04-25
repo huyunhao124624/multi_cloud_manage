@@ -13,6 +13,14 @@ import java.util.Map;
 @Slf4j
 public class TerraformUtil {
 
+    private static String TERRAFORM = "terraform";
+    private static String AUTO_APPROVE_OPTIONS = "-auto-approve";
+    private static String APPLY = "apply";
+    private static String DESTROY = "destroy";
+    private static String INIT = "init";
+    private static String SHOW = "show";
+    private static String JSON_OPTIONS = "-json";
+
     public static JSONObject parseNormalTfOutputToJSON(InputStream inputStream) throws IOException {
 
         BufferedReader inputReader = new BufferedReader(new InputStreamReader(inputStream));
@@ -26,7 +34,8 @@ public class TerraformUtil {
     public static JSONObject terraformShow(File aimPath) throws IOException {
         BufferedReader inputReader = null;
         BufferedReader errorReader = null;
-        String[] cmdList = { "powershell", "-c", "echo yes | terraform show -json" };
+//        String[] cmdList = { "powershell", "-c", "echo yes | terraform show -json" };
+        String[] cmdList = {TERRAFORM,SHOW,JSON_OPTIONS};
         Map<String, List<String>> listMap = new HashMap<>();
         BufferedReader inputR = null;
 //        BufferedReader errorReader = null;
@@ -43,16 +52,33 @@ public class TerraformUtil {
         return jsonObject;
     }
 
+    public static void logFromProcessStream(Process process) throws IOException {
+        InputStream inputStream = process.getInputStream();
+        InputStream errorStream = process.getErrorStream();
+        BufferedReader inputReader = new BufferedReader(new InputStreamReader(inputStream));
+        BufferedReader errorReader = new BufferedReader(new InputStreamReader(errorStream));
+        String line = null;
+        while((line = inputReader.readLine())!=null){
+            log.info(line);
+        }
+        while((line = errorReader.readLine())!=null){
+            log.info(line);
+        }
+    }
+
     public static boolean terraformApply(File aimPath) throws IOException {
         // String[] cmdList = { "powershell", "-c", "echo yes | terraform destroy" };
-        String[] cmdList = { "powershell", "-c", "echo yes | terraform apply" };
+//        String[] cmdList = { "powershell", "-c", "echo yes | terraform apply" };
+        String[] cmdList = {TERRAFORM,APPLY,AUTO_APPROVE_OPTIONS};
         // List<String> resultList = new ArrayList<>();
 
         ProcessBuilder processBuilder = new ProcessBuilder(cmdList);
-        processBuilder.command(cmdList);
         processBuilder.directory(aimPath);
+        processBuilder.command(cmdList);
+
         // processBuilder.command();
         Process p = processBuilder.start();
+        logFromProcessStream(p);
         int num = 0;
         try {
             num = p.waitFor();
@@ -61,13 +87,19 @@ public class TerraformUtil {
             e.printStackTrace();
         }
         System.out.println(num);
-        return false;
+        if(num == 0){
+            return true;
+        }else{
+            return false;
+        }
+
 
     }
 
     public static boolean terraformInit(File aimPath) throws IOException {
         // String[] cmdList = { "powershell", "-c", "echo yes | terraform destroy" };
-        String[] cmdList = { "powershell", "-c", "echo yes | terraform init" };
+//        String[] cmdList = { "powershell", "-c", "echo yes | terraform init" };
+        String[] cmdList = {TERRAFORM,INIT};
         // List<String> resultList = new ArrayList<>();
 
         ProcessBuilder processBuilder = new ProcessBuilder(cmdList);
@@ -75,6 +107,7 @@ public class TerraformUtil {
         processBuilder.command(cmdList);
         // processBuilder.command();
         Process p = processBuilder.start();
+        logFromProcessStream(p);
         int num = 0;
         try {
             num = p.waitFor();
@@ -91,11 +124,13 @@ public class TerraformUtil {
     }
 
     public static boolean terraformDestroy(File aimPath) throws IOException {
-        String[] cmdList = { "powershell", "-c", "echo yes | terraform destroy" };
+//        String[] cmdList = { "powershell", "-c", "echo yes | terraform destroy" };
+        String[] cmdList = {TERRAFORM,DESTROY,AUTO_APPROVE_OPTIONS};
         ProcessBuilder processBuilder = new ProcessBuilder(cmdList);
         processBuilder.command(cmdList);
         processBuilder.directory(aimPath);
         Process p = processBuilder.start();
+        logFromProcessStream(p);
         int num = 0;
         try {
             num = p.waitFor();

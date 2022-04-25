@@ -1,6 +1,8 @@
 package com.hyh.netdev.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
@@ -8,6 +10,7 @@ import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 /**
  * <p>
@@ -20,36 +23,30 @@ import java.io.Serializable;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-@TableName("vm_meta")
-public class VmMeta extends Model<VmMeta> {
+@TableName("disk_meta")
+public class DiskMeta extends Model<DiskMeta> {
 
     private static final long serialVersionUID = 1L;
 
-    @TableField("cpu")
-    private Integer cpu;
+    @TableId(value = "disk_meta_id", type = IdType.AUTO)
+    private Long diskMetaId;
 
-    @TableField("memory")
-    private Integer memory;
+    @TableField("gbprice_per_hour")
+    private BigDecimal gbpricePerHour;
 
-    @TableField("instance_type")
-    private String instanceType;
+    @TableField("gbprice_per_month")
+    private String gbpricePerMonth;
 
-    @TableField("hour_pricing")
-    private String hourPricing;
-
-    @TableField("month_pricing")
-    private String monthPricing;
+    @TableField("gbprice_per_week")
+    private String gbpricePerWeek;
 
     @TableField("cloud_provider")
     private String cloudProvider;
 
-    @TableField("vm_meta_id")
-    private Long vmMetaId;
-
 
     @Override
     protected Serializable pkVal() {
-        return null;
+        return this.diskMetaId;
     }
 
 }
