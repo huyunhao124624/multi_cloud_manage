@@ -2,6 +2,7 @@ package com.hyh.netdev.controller;
 
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.hyh.netdev.bo.resource.GetInitApplyResourcePageObjectBo;
 import com.hyh.netdev.dao.DepartmentUserMapper;
 import com.hyh.netdev.dto.ApplyResourceDto;
 import com.hyh.netdev.entity.DepartmentUser;
@@ -33,8 +34,15 @@ public class ResourceController {
         Integer userId = Integer.parseInt(token.getName());
         DepartmentUser departmentUser = departmentUserMapper.selectOne(new QueryWrapper<DepartmentUser>().eq("user_id",userId));
         Long departmentId = departmentUser.getDepartmentId();
-        resourceService.applyPrivateResource(requestDto,userId,departmentId);
+        return resourceService.applyPrivateResource(requestDto,userId,departmentId);
+    }
 
+    @PostMapping("/api/resource/getInitApplyResourcePageObject")
+    public Result<GetInitApplyResourcePageObjectBo> getInitApplyResourcePageObject(UsernamePasswordAuthenticationToken token){
+        Integer userId = Integer.parseInt(token.getName());
+        DepartmentUser departmentUser = departmentUserMapper.selectOne(new QueryWrapper<DepartmentUser>().eq("user_id",userId));
+        Long departmentId = departmentUser.getDepartmentId();
+        return resourceService.getInitApplyResourcePageObject(userId,departmentId);
     }
 
 }

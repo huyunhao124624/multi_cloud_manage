@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hyh.netdev.dao.AmiMetaMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.hyh.netdev.entity.AmiMeta">
+        <id column="ami_id" property="amiId" />
+        <result column="ami_name" property="amiName" />
+        <result column="ami_provider" property="amiProvider" />
+        <result column="ami_out_id" property="amiOutId" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        ami_id, ami_name, ami_provider, ami_out_id
+    </sql>
+
+</mapper>

@@ -2,18 +2,17 @@ package com.hyh.netdev.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.hyh.netdev.bo.resource.GetInitApplyResourcePageObjectBo;
 import com.hyh.netdev.constant.ResultConstant;
-import com.hyh.netdev.dao.DiskMetaMapper;
-import com.hyh.netdev.dao.ResourceMapper;
-import com.hyh.netdev.dao.VmMetaMapper;
+import com.hyh.netdev.dao.*;
 import com.hyh.netdev.dto.ApplyResourceDto;
-import com.hyh.netdev.entity.DiskMeta;
-import com.hyh.netdev.entity.Resource;
-import com.hyh.netdev.entity.VmMeta;
+import com.hyh.netdev.entity.*;
 import com.hyh.netdev.enums.BooleanEnum;
 import com.hyh.netdev.enums.CloudProviderEnum;
 import com.hyh.netdev.enums.ResourceStatusEnum;
+import com.hyh.netdev.enums.ResourceTypeEnum;
 import com.hyh.netdev.service.ResourceService;
+import com.hyh.netdev.util.EnumUtils;
 import com.hyh.netdev.util.TerraformUtil;
 import com.hyh.netdev.vo.Result;
 import lombok.extern.slf4j.Slf4j;
@@ -27,10 +26,7 @@ import org.springframework.util.ResourceUtils;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -45,12 +41,65 @@ public class ResourceServiceImpl implements ResourceService {
     @Autowired
     private ResourceMapper resourceMapper;
 
+    @Autowired
+    private ResourcePoolMapper resourcePoolMapper;
+
+    @Autowired
+    AmiMetaMapper amiMetaMapper;
+
     @Value("${terraform.tempPath}")
     private String tfBasePath;
 
     private static String awsLocalFilePath = "terraform_template/aws/aws_local.tf";
     private static String AWS_FILE_NAME = "aws.tf";
 
+
+
+    @Override
+    public Result<GetInitApplyResourcePageObjectBo> getInitApplyResourcePageObject(Integer userId, Long departmentId) {
+        GetInitApplyResourcePageObjectBo resultBo = new GetInitApplyResourcePageObjectBo();
+        ResourcePool resourcePool = resourcePoolMapper.selectOne(new QueryWrapper<ResourcePool>().eq("department_id", departmentId));
+        String cloudProvider = resourcePool.getResourcePoolType();
+        resultBo.setCloudProviderCode(cloudProvider);
+        CloudProviderEnum currentCloudProviderEnum = EnumUtils.getEnumByCode(CloudProviderEnum.class, cloudProvider);
+        resultBo.setCloudProviderName(currentCloudProviderEnum.getTypeName());
+
+        List<VmMeta> vmMetaList = vmMetaMapper.selectList(new QueryWrapper<VmMeta>().eq("cloud_provider", cloudProvider));
+
+        List<GetInitApplyResourcePageObjectBo.ResourceSpecsBo> resourceSpecsBoList = new ArrayList<>();
+        vmMetaList.forEach((vmMeta)->{
+            GetInitApplyResourcePageObjectBo.ResourceSpecsBo resourceSpecsBo = new GetInitApplyResourcePageObjectBo.ResourceSpecsBo();
+            resourceSpecsBo.setCpuNum(vmMeta.getCpu());
+            resourceSpecsBo.setMemorySize(vmMeta.getMemory());
+            resourceSpecsBo.setInstanceType(vmMeta.getInstanceType());
+            resourceSpecsBoList.add(resourceSpecsBo);
+        });
+        resultBo.setResourceSpecsList(resourceSpecsBoList);
+
+
+        List<GetInitApplyResourcePageObjectBo.AmiOutBo> imageList = new ArrayList<>();
+        List<AmiMeta> amiMetaList = amiMetaMapper.selectList(new QueryWrapper<AmiMeta>().eq("cloud_provider", cloudProvider));
+        amiMetaList.forEach((amiMeta)->{
+            GetInitApplyResourcePageObjectBo.AmiOutBo image = new GetInitApplyResourcePageObjectBo.AmiOutBo();
+            image.setAmiName(amiMeta.getAmiName());
+            image.setAmiOutId(amiMeta.getAmiOutId());
+            imageList.add(image);
+        });
+        resultBo.setImageList(imageList);
+
+        List<GetInitApplyResourcePageObjectBo.ResourceTypeBo> resourceTypeBoList = new ArrayList<>();
+        List<ResourceTypeEnum> enumList = org.apache.commons.lang3.EnumUtils.getEnumList(ResourceTypeEnum.class);
+        for (ResourceTypeEnum resourceTypeEnum : enumList) {
+            GetInitApplyResourcePageObjectBo.ResourceTypeBo resourceTypeBo = new GetInitApplyResourcePageObjectBo.ResourceTypeBo();
+            resourceTypeBo.setResourceTypeName(resourceTypeEnum.getName());
+            resourceTypeBo.setResourceTypeCode(resourceTypeEnum.getCode());
+            resourceTypeBoList.add(resourceTypeBo);
+        }
+
+        resultBo.setResourceTypeList(resourceTypeBoList);
+
+        return new Result<>(resultBo);
+    }
 
 
     @Override
@@ -89,6 +138,8 @@ public class ResourceServiceImpl implements ResourceService {
 
 
     }
+
+
 
     private void handleInstanceType(String uuid,String instanceType,Integer diskSize,String amiOutId,Resource resource,String cloudProvider) throws IOException {
 
