@@ -65,6 +65,16 @@ public class Resource extends Model<Resource> {
     @TableField("resource_type")
     private String resourceType;
 
+    @TableField("disk_size")
+    private Integer diskSize;
+
+    @TableField("login_name")
+    private String loginName;
+
+    @TableField("password")
+    private String password;
+
+
 
     @Override
     protected Serializable pkVal() {

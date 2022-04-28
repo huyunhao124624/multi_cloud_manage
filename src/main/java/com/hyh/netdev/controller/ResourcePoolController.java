@@ -1,5 +1,6 @@
 package com.hyh.netdev.controller;
 
+import com.hyh.netdev.bo.resource.GetResourceListBo;
 import com.hyh.netdev.bo.resourcePool.GetAllResourcePoolBo;
 import com.hyh.netdev.bo.resourcePool.GetAllResourcePoolTypeBo;
 import com.hyh.netdev.dto.AddResourcePoolTypeDto;
@@ -12,6 +13,7 @@ import com.hyh.netdev.vo.PageLimit;
 import com.hyh.netdev.vo.Result;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -52,5 +54,6 @@ public class ResourcePoolController {
     public Result deleteResourcePoolById(@RequestBody DeleteResourcePoolDto requestDto){
         return resourcePoolService.deleteResourcePool(requestDto);
     }
+
 
 }

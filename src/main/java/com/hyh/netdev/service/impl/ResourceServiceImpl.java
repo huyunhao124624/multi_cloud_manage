@@ -1,19 +1,23 @@
 package com.hyh.netdev.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.api.R;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.hyh.netdev.bo.resource.GetInitApplyResourcePageObjectBo;
+import com.hyh.netdev.bo.resource.GetResourceListBo;
 import com.hyh.netdev.constant.ResultConstant;
 import com.hyh.netdev.dao.*;
 import com.hyh.netdev.dto.ApplyResourceDto;
 import com.hyh.netdev.entity.*;
-import com.hyh.netdev.enums.BooleanEnum;
-import com.hyh.netdev.enums.CloudProviderEnum;
-import com.hyh.netdev.enums.ResourceStatusEnum;
-import com.hyh.netdev.enums.ResourceTypeEnum;
+import com.hyh.netdev.enums.*;
 import com.hyh.netdev.service.ResourceService;
 import com.hyh.netdev.util.EnumUtils;
 import com.hyh.netdev.util.TerraformUtil;
+import com.hyh.netdev.vo.MPage;
+import com.hyh.netdev.vo.PageLimit;
 import com.hyh.netdev.vo.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -101,6 +105,75 @@ public class ResourceServiceImpl implements ResourceService {
         return new Result<>(resultBo);
     }
 
+    @Override
+    public Result<MPage<GetResourceListBo>> getResourceList(Integer userId, Long departmentId, Integer roleId, PageLimit pageLimit) {
+        IPage page = new Page<Resource>();
+        page.setPages(pageLimit.getPage());
+        page.setSize(pageLimit.getLimit());
+        IPage resourcePageList = null;
+        Integer count = 0;
+
+        if(RoleEnum.DEVELOP_LEADER.getCode().equals(roleId)) {
+            resourcePageList = resourceMapper.selectPage(page, new QueryWrapper<Resource>().eq("department_id",departmentId));
+            count = resourceMapper.selectCount(new QueryWrapper<Resource>().eq("department_id",departmentId));
+        }else if(RoleEnum.DEVELOP_FOLLOWER.getCode().equals(roleId)){
+            resourcePageList = resourceMapper.selectPage(page,new QueryWrapper<Resource>().eq("user_id",userId)
+                    .and(Wrapper->Wrapper.eq("department_id",departmentId).eq("resource_type",ResourceTypeEnum.DEPARTMENT_PUBLIC.getCode())));
+            count = resourceMapper.selectCount(new QueryWrapper<Resource>().eq("user_id",userId)
+                    .and(Wrapper->Wrapper.eq("department_id",departmentId).eq("resource_type",ResourceTypeEnum.DEPARTMENT_PUBLIC.getCode())));
+        }else{
+            resourcePageList = resourceMapper.selectPage(page, new QueryWrapper<Resource>().eq("department_id",departmentId).eq("resource_type",ResourceTypeEnum.DEPARTMENT_PUBLIC.getCode()));
+            count = resourceMapper.selectCount(new QueryWrapper<Resource>().eq("department_id",departmentId).eq("resource_type",ResourceTypeEnum.DEPARTMENT_PUBLIC.getCode()));
+        }
+        List<Resource> recordList = resourcePageList.getRecords();
+
+        List<GetResourceListBo> resultList = new ArrayList<>();
+        for (Resource resource : recordList) {
+
+            boolean releaseButton = true;
+
+            GetResourceListBo getResourceListBo = new GetResourceListBo();
+            getResourceListBo.setResourceId(resource.getResourceId());
+
+
+            getResourceListBo.setResourceTypeCode(EnumUtils.getEnumByCode(ResourceTypeEnum.class, resource.getResourceType()).getCode());
+            getResourceListBo.setResourceTypeName(EnumUtils.getEnumByCode(ResourceTypeEnum.class, resource.getResourceType()).getName());
+
+            VmMeta vmMeta = vmMetaMapper.selectById(resource.getVmMetaId());
+            getResourceListBo.setCpuNum(vmMeta.getCpu());
+            getResourceListBo.setMemorySize(vmMeta.getMemory());
+            getResourceListBo.setDiskSize(resource.getDiskSize());
+
+            getResourceListBo.setLoginName(resource.getLoginName());
+            getResourceListBo.setPassword(resource.getPassword());
+
+            getResourceListBo.setPublicIp(resource.getPublicIp());
+
+            String resourceStatus = resource.getResourceStatus();
+
+
+            if (!resource.getDepartmentId().equals(departmentId) && !resource.getUserId().equals(userId)) {
+                releaseButton = false;
+            }
+
+            if (!StringUtils.equals(resourceStatus, ResourceStatusEnum.RUNNING.getCode())) {
+                releaseButton = false;
+            }
+
+            List<String> buttonList = new ArrayList<>();
+            if (releaseButton) {
+                buttonList.add(ButtonEnum.RELEASE.getCode());
+            }
+            getResourceListBo.setButtonList(buttonList);
+            resultList.add(getResourceListBo);
+        }
+
+        MPage<GetResourceListBo> mpage = new MPage<GetResourceListBo>(count,resultList);
+        return new Result<>(mpage);
+    }
+
+
+
 
     @Override
     public Result applyPrivateResource(ApplyResourceDto requestDto, Integer userId, Long departmentId) throws IOException {
@@ -114,9 +187,6 @@ public class ResourceServiceImpl implements ResourceService {
         DiskMeta diskMeta = diskMetaMapper.selectOne(new QueryWrapper<DiskMeta>().eq("cloud_provider",requestDto.getCloudProviderCode()));
 
 
-
-
-
         String instanceType = vmMeta.getInstanceType();
         String uuid = UUID.randomUUID().toString().replaceAll("-","");
 
@@ -126,6 +196,8 @@ public class ResourceServiceImpl implements ResourceService {
         resource.setDepartmentId(departmentId);
         resource.setCloudProvider(requestDto.getCloudProviderCode());
         resource.setIsDelete(BooleanEnum.NO.getCode());
+
+        resource.setResourceType(requestDto.getResourceType());
 
         resource.setVmMetaId(vmMeta.getVmMetaId());
         resource.setDiskMetaId(diskMeta.getDiskMetaId());
