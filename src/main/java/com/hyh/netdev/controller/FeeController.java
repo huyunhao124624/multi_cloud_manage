@@ -6,6 +6,7 @@ import com.hyh.netdev.dao.DepartmentMapper;
 import com.hyh.netdev.dao.DepartmentUserMapper;
 import com.hyh.netdev.dao.UserRoleMapper;
 import com.hyh.netdev.dto.fee.GetDepartmentDifferentRoundUsageDto;
+import com.hyh.netdev.dto.resource.GetDepartmentDifferentRoundFeeDto;
 import com.hyh.netdev.entity.Department;
 import com.hyh.netdev.entity.DepartmentUser;
 import com.hyh.netdev.entity.UserRole;
@@ -67,10 +68,17 @@ public class FeeController {
         return new Result<>(resultList);
     }
 
-    @PostMapping("/api/fee/getDepartmentDifferentRoundFee")
-    public Result<List<Integer>> getDepartmentDifferentRoundFee(@RequestBody GetDepartmentDifferentRoundUsageDto requestDto){
+    @PostMapping("/api/fee/getDepartmentDifferentRoundUsage")
+    public Result<List<Integer>> getDepartmentDifferentRoundUsaage(@RequestBody GetDepartmentDifferentRoundUsageDto requestDto){
         Long departmentId = requestDto.getDepartmentId();
         return feeService.getDepartmentDifferentRoundUsage(departmentId);
+    }
+
+    @PostMapping("/api/fee/getDepartmentDifferentRoundFee")
+    public Result<List<Double>> getDepartmentDifferentRoundFee(@RequestBody GetDepartmentDifferentRoundFeeDto requestDto){
+        Long departmentId = requestDto.getDepartmentId();
+        return feeService.getDepartmentDifferentRoundFee(departmentId);
+
     }
 
 }

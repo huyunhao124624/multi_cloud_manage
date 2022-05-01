@@ -40,6 +40,9 @@ public class VmMeta extends Model<VmMeta> {
     @TableField("hour_pricing")
     private Double hourPricing;
 
+    @TableField("week_pricing")
+    private Double weekPricing;
+
     @TableField("half_month_pricing")
     private Double halfMonthPricing;
 

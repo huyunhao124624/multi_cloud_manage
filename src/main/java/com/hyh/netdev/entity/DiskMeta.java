@@ -32,7 +32,7 @@ public class DiskMeta extends Model<DiskMeta> {
     private Long diskMetaId;
 
     @TableField("gbprice_per_hour")
-    private BigDecimal gbpricePerHour;
+    private Double gbpricePerHour;
 
     @TableField("gbprice_per_month")
     private String gbpricePerMonth;
