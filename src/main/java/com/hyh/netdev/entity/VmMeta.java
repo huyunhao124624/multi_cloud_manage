@@ -1,12 +1,15 @@
 package com.hyh.netdev.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
+import javax.persistence.Table;
 import java.io.Serializable;
 
 /**
@@ -35,15 +38,30 @@ public class VmMeta extends Model<VmMeta> {
     private String instanceType;
 
     @TableField("hour_pricing")
-    private String hourPricing;
+    private Double hourPricing;
+
+    @TableField("half_month_pricing")
+    private Double halfMonthPricing;
 
     @TableField("month_pricing")
-    private String monthPricing;
+    private Double monthPricing;
+
+    @TableField("two_month_pricing")
+    private Double twoMonthPricing;
+
+    @TableField("three_month_pricing")
+    private Double threeMonthPricing;
+
+    @TableField("half_year_pricing")
+    private Double halfYearPricing;
+
+    @TableField("year_pricing")
+    private Double yearPricing;
 
     @TableField("cloud_provider")
     private String cloudProvider;
 
-    @TableField("vm_meta_id")
+    @TableId(value="vm_meta_id",type = IdType.AUTO)
     private Long vmMetaId;
 
 

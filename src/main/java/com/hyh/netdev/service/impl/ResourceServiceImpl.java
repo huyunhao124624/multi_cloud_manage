@@ -118,7 +118,7 @@ public class ResourceServiceImpl implements ResourceService {
             count = resourceMapper.selectCount(new QueryWrapper<Resource>().eq("department_id",departmentId));
         }else if(RoleEnum.DEVELOP_FOLLOWER.getCode().equals(roleId)){
             resourcePageList = resourceMapper.selectPage(page,new QueryWrapper<Resource>().eq("user_id",userId)
-                    .and(Wrapper->Wrapper.eq("department_id",departmentId).eq("resource_type",ResourceTypeEnum.DEPARTMENT_PUBLIC.getCode())));
+                    .or(Wrapper->Wrapper.eq("department_id",departmentId).eq("resource_type",ResourceTypeEnum.DEPARTMENT_PUBLIC.getCode())));
             count = resourceMapper.selectCount(new QueryWrapper<Resource>().eq("user_id",userId)
                     .and(Wrapper->Wrapper.eq("department_id",departmentId).eq("resource_type",ResourceTypeEnum.DEPARTMENT_PUBLIC.getCode())));
         }else{
@@ -159,6 +159,13 @@ public class ResourceServiceImpl implements ResourceService {
             if (!StringUtils.equals(resourceStatus, ResourceStatusEnum.RUNNING.getCode())) {
                 releaseButton = false;
             }
+
+            if(StringUtils.equals(ResourceTypeEnum.DEPARTMENT_PUBLIC.getCode(), resource.getResourceType()) && !RoleEnum.DEVELOP_LEADER.getCode().equals(roleId)){
+                releaseButton = false;
+            }
+
+            getResourceListBo.setResourceStatusCode(resource.getResourceStatus());
+            getResourceListBo.setResourceStatusName(EnumUtils.getEnumByCode(ResourceStatusEnum.class,resource.getResourceStatus()).getName());
 
             List<String> buttonList = new ArrayList<>();
             if (releaseButton) {
@@ -275,6 +282,7 @@ public class ResourceServiceImpl implements ResourceService {
         JSONObject awsPublicIpObj = outputs.getJSONObject("aws_public_ip");
         String publicIp = awsPublicIpObj.getString("value");
         resource.setPublicIp(publicIp);
+        resource.setResourceStatus(ResourceStatusEnum.RUNNING.getCode());
 
         Date currentDate = new Date();
         resource.setCreateTime(currentDate);

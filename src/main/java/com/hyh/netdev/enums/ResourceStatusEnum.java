@@ -8,9 +8,10 @@ import lombok.Getter;
 public enum ResourceStatusEnum {
 
     CREATING("CREATING","创建中"),
-    RUNNING("RUNNING","运行中");
+    RUNNING("RUNNING","运行中"),
+    RELEASED("RELEASED","已经释放了");
 
     private String code;
-    private String description;
+    private String name;
 
 }

@@ -13,6 +13,8 @@ public class GetResourceListBo {
     private Integer memorySize;
     private Integer diskSize;
     private String publicIp;
+    private String resourceStatusCode;
+    private String resourceStatusName;
 
     private String loginName;
     private String password;
