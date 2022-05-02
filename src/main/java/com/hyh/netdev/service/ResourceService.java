@@ -14,7 +14,7 @@ public interface ResourceService {
 
     public Result applyResource(ApplyResourceDto requestDto, Integer userId, Long departmentId) throws IOException;
 
-    public Result<GetInitApplyResourcePageObjectBo> getInitApplyResourcePageObject(Integer userId,Long departmentId);
+    public Result<GetInitApplyResourcePageObjectBo> getInitApplyResourcePageObject(Integer userId,Long departmentId,Integer roleId);
 
     public Result<MPage<GetResourceListBo>> getResourceList(Integer userId, Long departmentId, Integer roleId, PageLimit pageLimit);
 

@@ -1,10 +1,8 @@
 package com.hyh.netdev.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.api.R;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.hyh.netdev.bo.resource.GetInitApplyResourcePageObjectBo;
 import com.hyh.netdev.bo.resource.GetResourceListBo;
@@ -60,7 +58,7 @@ public class ResourceServiceImpl implements ResourceService {
 
 
     @Override
-    public Result<GetInitApplyResourcePageObjectBo> getInitApplyResourcePageObject(Integer userId, Long departmentId) {
+    public Result<GetInitApplyResourcePageObjectBo> getInitApplyResourcePageObject(Integer userId, Long departmentId, Integer roleId) {
         GetInitApplyResourcePageObjectBo resultBo = new GetInitApplyResourcePageObjectBo();
         ResourcePool resourcePool = resourcePoolMapper.selectOne(new QueryWrapper<ResourcePool>().eq("department_id", departmentId));
         String cloudProvider = resourcePool.getResourcePoolType();
@@ -94,6 +92,9 @@ public class ResourceServiceImpl implements ResourceService {
         List<GetInitApplyResourcePageObjectBo.ResourceTypeBo> resourceTypeBoList = new ArrayList<>();
         List<ResourceTypeEnum> enumList = org.apache.commons.lang3.EnumUtils.getEnumList(ResourceTypeEnum.class);
         for (ResourceTypeEnum resourceTypeEnum : enumList) {
+            if(resourceTypeEnum.getCode().equals(ResourceTypeEnum.DEPARTMENT_PUBLIC.getCode()) && RoleEnum.DEVELOP_FOLLOWER.getCode().equals(roleId)){
+                continue;
+            }
             GetInitApplyResourcePageObjectBo.ResourceTypeBo resourceTypeBo = new GetInitApplyResourcePageObjectBo.ResourceTypeBo();
             resourceTypeBo.setResourceTypeName(resourceTypeEnum.getName());
             resourceTypeBo.setResourceTypeCode(resourceTypeEnum.getCode());

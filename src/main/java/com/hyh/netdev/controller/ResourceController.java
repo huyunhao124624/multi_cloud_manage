@@ -2,7 +2,6 @@ package com.hyh.netdev.controller;
 
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.hyh.netdev.bo.resource.GetInitApplyResourcePageObjectBo;
 import com.hyh.netdev.bo.resource.GetResourceListBo;
 import com.hyh.netdev.dao.DepartmentUserMapper;
@@ -52,7 +51,8 @@ public class ResourceController {
         Integer userId = Integer.parseInt(token.getName());
         DepartmentUser departmentUser = departmentUserMapper.selectOne(new QueryWrapper<DepartmentUser>().eq("user_id",userId));
         Long departmentId = departmentUser.getDepartmentId();
-        return resourceService.getInitApplyResourcePageObject(userId,departmentId);
+        UserRole userRole = userRoleMapper.selectOne(new QueryWrapper<UserRole>().eq("user_id",userId));
+        return resourceService.getInitApplyResourcePageObject(userId,departmentId, userRole.getRoleId());
     }
 
     @PostMapping("/api/resource/getResourceList")
