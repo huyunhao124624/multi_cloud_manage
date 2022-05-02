@@ -9,6 +9,7 @@ import com.hyh.netdev.dao.DepartmentUserMapper;
 import com.hyh.netdev.dao.UserRoleMapper;
 import com.hyh.netdev.dto.ApplyResourceDto;
 import com.hyh.netdev.dto.resource.GetResourceListDto;
+import com.hyh.netdev.dto.resource.ReleaseResourceDto;
 import com.hyh.netdev.entity.DepartmentUser;
 import com.hyh.netdev.entity.UserRole;
 import com.hyh.netdev.service.ResourceService;
@@ -43,7 +44,7 @@ public class ResourceController {
         Integer userId = Integer.parseInt(token.getName());
         DepartmentUser departmentUser = departmentUserMapper.selectOne(new QueryWrapper<DepartmentUser>().eq("user_id",userId));
         Long departmentId = departmentUser.getDepartmentId();
-        return resourceService.applyPrivateResource(requestDto,userId,departmentId);
+        return resourceService.applyResource(requestDto,userId,departmentId);
     }
 
     @PostMapping("/api/resource/getInitApplyResourcePageObject")
@@ -64,6 +65,12 @@ public class ResourceController {
 
         PageLimit pageLimit = new PageLimit(requestDto.getPage(),requestDto.getLimit());
         return resourceService.getResourceList(userId,departmentId,roleId,pageLimit);
+    }
+
+    @PostMapping("/api/resource/releaseResource")
+    public Result releaseResource(@RequestBody ReleaseResourceDto requestDto) throws IOException {
+        Long resourceId = requestDto.getResourceId();
+        return resourceService.releaseResource(resourceId);
     }
 
 

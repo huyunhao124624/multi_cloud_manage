@@ -12,10 +12,12 @@ import java.io.IOException;
 
 public interface ResourceService {
 
-    public Result applyPrivateResource(ApplyResourceDto requestDto, Integer userId, Long departmentId) throws IOException;
+    public Result applyResource(ApplyResourceDto requestDto, Integer userId, Long departmentId) throws IOException;
 
     public Result<GetInitApplyResourcePageObjectBo> getInitApplyResourcePageObject(Integer userId,Long departmentId);
 
     public Result<MPage<GetResourceListBo>> getResourceList(Integer userId, Long departmentId, Integer roleId, PageLimit pageLimit);
+
+    public Result releaseResource(Long resourceId ) throws IOException;;
 
 }

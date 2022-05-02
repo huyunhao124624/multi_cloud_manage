@@ -21,7 +21,7 @@ public class TestConntroller {
 
     @PostMapping("/api/ignore/applyResource")
     public Result applyResource(@RequestBody ApplyResourceDto requestDto, @RequestParam("userId") Integer userId, @RequestParam("departmentId") Long departmentId) throws IOException {
-        return resourceService.applyPrivateResource(requestDto,userId,departmentId);
+        return resourceService.applyResource(requestDto,userId,departmentId);
 
     }
 }

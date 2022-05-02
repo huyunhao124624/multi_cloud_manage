@@ -179,22 +179,32 @@ public class ResourceServiceImpl implements ResourceService {
         return new Result<>(mpage);
     }
 
+    @Override
+    public Result releaseResource(Long resourceId) throws IOException {
+        Resource resource = resourceMapper.selectById(resourceId);
+        String pathUuid = resource.getPathUuid();
+        File destroyPathFile = new File(tfBasePath+"\\"+ pathUuid);
 
+        TerraformUtil.terraformDestroy(destroyPathFile);
+        resource.setResourceStatus(ResourceStatusEnum.RELEASED.getCode());
+        resourceMapper.updateById(resource);
+        return ResultConstant.SUCCESS;
+    }
 
 
     @Override
-    public Result applyPrivateResource(ApplyResourceDto requestDto, Integer userId, Long departmentId) throws IOException {
+    public Result applyResource(ApplyResourceDto requestDto, Integer userId, Long departmentId) throws IOException {
         Integer cpuNum = requestDto.getCpuNum();
         Integer memorySize = requestDto.getMemorySize();
+        String instanceType = requestDto.getInstanceType();
         Integer diskSize = requestDto.getDiskSize();
         VmMeta vmMeta = vmMetaMapper.selectOne(new QueryWrapper<VmMeta>()
-                .eq("cpu", cpuNum)
-                .eq("memory", memorySize)
-                .eq("cloud_provider", requestDto.getCloudProviderCode()));
+                        .eq("instance_type",instanceType)
+                        .eq("cloud_provider", requestDto.getCloudProviderCode()));
         DiskMeta diskMeta = diskMetaMapper.selectOne(new QueryWrapper<DiskMeta>().eq("cloud_provider",requestDto.getCloudProviderCode()));
 
 
-        String instanceType = vmMeta.getInstanceType();
+        instanceType = vmMeta.getInstanceType();
         String uuid = UUID.randomUUID().toString().replaceAll("-","");
 
         Resource resource = new Resource();
@@ -204,12 +214,15 @@ public class ResourceServiceImpl implements ResourceService {
         resource.setCloudProvider(requestDto.getCloudProviderCode());
         resource.setIsDelete(BooleanEnum.NO.getCode());
 
-        resource.setResourceType(requestDto.getResourceType());
+        resource.setResourceType(requestDto.getResourceTypeCode());
 
         resource.setVmMetaId(vmMeta.getVmMetaId());
         resource.setDiskMetaId(diskMeta.getDiskMetaId());
 
         resource.setResourceStatus(ResourceStatusEnum.CREATING.getCode());
+
+        resource.setDiskSize(diskSize);
+
 
         this.handleInstanceType(uuid,instanceType,requestDto.getDiskSize(),requestDto.getAmiOutId(),resource,requestDto.getCloudProviderCode());
 
@@ -237,6 +250,11 @@ public class ResourceServiceImpl implements ResourceService {
      * @throws IOException
      */
     private void handleAWSApply(String uuid, String instanceType, Integer diskSize, String amiOutId,Resource resource) throws IOException {
+
+        String loginName = "root";
+        String password = UUID.randomUUID().toString().replaceAll("-","");
+        resource.setLoginName(loginName);
+        resource.setPassword(password);
 
         File file = ResourceUtils.getFile("classpath:"+awsLocalFilePath);
         String templateString = TerraformUtil.txt2String(file);
