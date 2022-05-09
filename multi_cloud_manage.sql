@@ -11,7 +11,7 @@
  Target Server Version : 50737
  File Encoding         : 65001
 
- Date: 25/04/2022 05:40:57
+ Date: 10/05/2022 01:58:41
 */
 
 SET NAMES utf8mb4;
@@ -24,7 +24,7 @@ DROP TABLE IF EXISTS `ami_meta`;
 CREATE TABLE `ami_meta`  (
   `ami_id` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `ami_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
-  `ami_provider` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
+  `cloud_provider` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   `ami_out_id` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   PRIMARY KEY (`ami_id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
@@ -32,6 +32,7 @@ CREATE TABLE `ami_meta`  (
 -- ----------------------------
 -- Records of ami_meta
 -- ----------------------------
+INSERT INTO `ami_meta` VALUES ('1', 'awsDefault', 'awsCloud', 'ami-005e54dee72cc1d00');
 
 -- ----------------------------
 -- Table structure for cart
@@ -82,6 +83,8 @@ CREATE TABLE `department_user`  (
 -- ----------------------------
 INSERT INTO `department_user` VALUES (1, 1);
 INSERT INTO `department_user` VALUES (1, 270);
+INSERT INTO `department_user` VALUES (1, 271);
+INSERT INTO `department_user` VALUES (1, 272);
 INSERT INTO `department_user` VALUES (2, 273);
 
 -- ----------------------------
@@ -151,6 +154,23 @@ INSERT INTO `porder` VALUES (16, 270, 4, 0, 1, 999, 999);
 INSERT INTO `porder` VALUES (17, 270, 4, 1, 1, 999, 999);
 
 -- ----------------------------
+-- Table structure for private_resource_limit
+-- ----------------------------
+DROP TABLE IF EXISTS `private_resource_limit`;
+CREATE TABLE `private_resource_limit`  (
+  `private_resource_limit_id` bigint(20) NOT NULL,
+  `user_id` int(11) NULL DEFAULT NULL,
+  `cpu_limit` int(11) NULL DEFAULT NULL,
+  `memory_limit` int(11) NULL DEFAULT NULL,
+  `disk_limit` int(11) NULL DEFAULT NULL,
+  PRIMARY KEY (`private_resource_limit_id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of private_resource_limit
+-- ----------------------------
+
+-- ----------------------------
 -- Table structure for product
 -- ----------------------------
 DROP TABLE IF EXISTS `product`;
@@ -207,12 +227,24 @@ CREATE TABLE `resource`  (
   `cloud_provider` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   `resource_status` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   `public_ip` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
+  `resource_type` varbinary(30) NULL DEFAULT NULL,
+  `disk_size` bigint(20) NULL DEFAULT NULL,
+  `login_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
+  `password` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   PRIMARY KEY (`resource_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 10 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of resource
 -- ----------------------------
+INSERT INTO `resource` VALUES (1, 1, 1, 1, 1, NULL, '2022-04-25 21:48:59', NULL, '0', 'awsCloud', 'RUNNING', '127.37.11.226', 0x4445504152544D454E545F5055424C4943, 20, 'root', 'zx124624');
+INSERT INTO `resource` VALUES (2, 2, 1, 1, 1, NULL, '2022-04-25 22:37:40', NULL, '0', 'awsCloud', 'RUNNING', '127.204.1.34', 0x4445504152544D454E545F5055424C4943, 20, 'root', 'zx124624');
+INSERT INTO `resource` VALUES (4, 270, 1, 1, 1, '63b563df8f084b54ae15c4c0039f8741', '2022-05-02 04:10:34', NULL, '0', 'awsCloud', 'RELEASED', '127.158.1.61', 0x504552534F4E414C5F50524956415445, 20, 'root', 'a8aa910b4ff7470ea5de0464a61588de');
+INSERT INTO `resource` VALUES (5, 270, 1, 1, 1, 'c1b856fe67454f638578ba876ab15c61', '2022-05-02 04:41:10', NULL, '0', 'awsCloud', 'RELEASED', '127.50.107.50', 0x504552534F4E414C5F50524956415445, 20, 'root', '1af87191d77342c18574a20a22ba1532');
+INSERT INTO `resource` VALUES (6, 270, 1, 1, 1, 'd744790ee29c417594cae168e3a835d9', '2022-05-02 16:31:25', NULL, '0', 'awsCloud', 'RELEASED', '127.71.204.180', 0x504552534F4E414C5F50524956415445, 200, 'root', '00290c5db709469f9620a7ce1c67f17c');
+INSERT INTO `resource` VALUES (7, 270, 1, 1, 1, '8cda8c6bc9b84cedb022ff50f1e1cee3', '2022-05-02 16:37:20', NULL, '0', 'awsCloud', 'RELEASED', '127.170.6.130', 0x504552534F4E414C5F50524956415445, 233, 'root', '8e2f30f3ad144a349a67d39ebbda1936');
+INSERT INTO `resource` VALUES (8, 270, 1, 1, 1, '356fb6f79e4b4dc7b1713195a7cbdce5', '2022-05-02 20:23:08', NULL, '0', 'awsCloud', 'RELEASED', '127.106.253.201', 0x504552534F4E414C5F50524956415445, 244, 'root', '7d1e4e7e85474c0ab63b8bf0517827ab');
+INSERT INTO `resource` VALUES (9, 270, 1, 1, 1, '87ed8cd942ab46dc9af32de2087bfaed', '2022-05-02 20:34:42', NULL, '0', 'awsCloud', 'RUNNING', '127.127.248.22', 0x504552534F4E414C5F50524956415445, 12, 'root', '72af3e27a62840f19079e20d4a03bcd8');
 
 -- ----------------------------
 -- Table structure for resource_pool
@@ -234,7 +266,7 @@ CREATE TABLE `resource_pool`  (
 -- ----------------------------
 -- Records of resource_pool
 -- ----------------------------
-INSERT INTO `resource_pool` VALUES (20, 100, 0, 0, 40, 1024, 1, 1, 'aliCloud');
+INSERT INTO `resource_pool` VALUES (20, 100, 0, 0, 40, 1024, 1, 1, 'awsCloud');
 
 -- ----------------------------
 -- Table structure for role
@@ -538,8 +570,8 @@ CREATE TABLE `user_role`  (
 INSERT INTO `user_role` VALUES (1, 3, '123456');
 INSERT INTO `user_role` VALUES (270, 2, 'zx124624');
 INSERT INTO `user_role` VALUES (271, 1, 'zx124624');
-INSERT INTO `user_role` VALUES (272, 1, 'zx124624');
-INSERT INTO `user_role` VALUES (273, 1, 'zx124624');
+INSERT INTO `user_role` VALUES (272, 2, 'zx124624');
+INSERT INTO `user_role` VALUES (273, 2, 'zx124624');
 
 -- ----------------------------
 -- Table structure for user_trace
@@ -576,17 +608,23 @@ DROP TABLE IF EXISTS `vm_meta`;
 CREATE TABLE `vm_meta`  (
   `cpu` int(11) NULL DEFAULT NULL,
   `memory` int(11) NULL DEFAULT NULL,
-  `instance_type` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
-  `hour_pricing` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
-  `month_pricing` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
+  `instance_type` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   `cloud_provider` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   `vm_meta_id` bigint(11) NOT NULL,
+  `hour_pricing` double NULL DEFAULT NULL,
+  `week_pricing` double NULL DEFAULT NULL,
+  `half_month_pricing` double NULL DEFAULT NULL,
+  `month_pricing` double NULL DEFAULT NULL,
+  `two_month_pricing` double NULL DEFAULT NULL,
+  `three_month_pricing` double NULL DEFAULT NULL,
+  `half_year_pricing` double NULL DEFAULT NULL,
+  `year_pricing` double NULL DEFAULT NULL,
   PRIMARY KEY (`vm_meta_id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of vm_meta
 -- ----------------------------
-INSERT INTO `vm_meta` VALUES (1, 2, 't2.micro', '0.186', '256', 'awsCloud', 1);
+INSERT INTO `vm_meta` VALUES (1, 2, 't2.micro', 'awsCloud', 1, 0.186, 77, 133, 256, 450, 600, 1000, 1500);
 
 SET FOREIGN_KEY_CHECKS = 1;
