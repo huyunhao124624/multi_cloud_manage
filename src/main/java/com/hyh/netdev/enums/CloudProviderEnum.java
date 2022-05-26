@@ -9,6 +9,7 @@ public enum CloudProviderEnum {
 
     ALICLOUD("aliCloud","阿里云"),
     HUAWEICLOUD("huaweiCloud","华为云"),
+    AWSCLOUD_PUBLIC("awsPublic","亚马逊公有云"),
     AWS("awsCloud","亚马逊云");
 
     private String code;

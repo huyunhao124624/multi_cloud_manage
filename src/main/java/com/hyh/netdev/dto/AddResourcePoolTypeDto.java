@@ -5,7 +5,7 @@ import lombok.Data;
 @Data
 public class AddResourcePoolTypeDto {
     private Long departmentId;
-    private String resourceTypeCode;
+    private String resourcePoolTypeCode;
     private Integer cpuLimit;
     private Integer memoryLimit;
     private Integer diskLimit;

@@ -26,6 +26,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.ResourceUtils;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
@@ -53,7 +54,9 @@ public class ResourceServiceImpl implements ResourceService {
     private String tfBasePath;
 
     private static String awsLocalFilePath = "terraform_template/aws/aws_local.tf";
+    private static String hwFilePath = "terraform_template/hw/hw_cloud.tf";
     private static String AWS_FILE_NAME = "aws.tf";
+    private static String HW_FILE_NAME = "hw_cloud.tf";
 
 
 
@@ -238,7 +241,77 @@ public class ResourceServiceImpl implements ResourceService {
 
         if(StringUtils.equals(CloudProviderEnum.AWS.getCode(),cloudProvider)){
             this.handleAWSApply(uuid,instanceType,diskSize,amiOutId,resource);
+        }else if(StringUtils.equals(CloudProviderEnum.HUAWEICLOUD.getCode(),cloudProvider)){
+            this.handleHWApply(uuid,instanceType,diskSize,amiOutId,resource);
         }
+    }
+
+    private void handleHWApply(String uuid,String instanceType,Integer diskSize,String amiOutId,Resource resource) throws IOException {
+        String loginName = "root";
+        String password = "PW"+System.currentTimeMillis()+"pw";
+        resource.setLoginName(loginName);
+        resource.setPassword(password);
+
+        File file = ResourceUtils.getFile("classpath:"+hwFilePath);
+        String templateString = TerraformUtil.txt2String(file);
+
+        Map<String,String> replaceMap = new HashMap<>();
+        replaceMap.put("amiOutId",amiOutId);
+        replaceMap.put("instanceType",instanceType);
+        replaceMap.put("diskName", "multi_cloud_manage_hw_disk_"+uuid);
+        replaceMap.put("diskSize",diskSize+"");
+
+        replaceMap.put("hwEipAssociationName","multi_cloud_manage_hw_eip_associate_"+uuid);
+
+        replaceMap.put("hwDiskAttachName","multi_cloud_manage_disk_attached_"+uuid);
+
+        replaceMap.put("hwEipName","multicloud_manage_hw_eip_"+uuid);
+
+        replaceMap.put("hwInstanceName","multicloud_manage_hw_instance_"+uuid);
+
+        replaceMap.put("rootPassword",password);
+
+        replaceMap.put("hwVpcName","multicloud_manage_hw_vpc_"+uuid);
+
+        StringSubstitutor stringSubstitutor = new StringSubstitutor(replaceMap);
+        String formatTemplateString = stringSubstitutor.replace(templateString);
+
+        File aimDir = new File(tfBasePath+"\\"+uuid);
+        aimDir.mkdir();
+        File f = new File(aimDir.getAbsoluteFile() + "\\"+HW_FILE_NAME);
+        f.createNewFile();
+
+        if(f.exists()){
+            FileWriter fw = new FileWriter(f);
+            fw.append(formatTemplateString);
+            fw.close();
+        }
+
+        boolean ifInitSuccess = TerraformUtil.terraformInit(aimDir);
+        if(!ifInitSuccess){
+            log.error("terraform init {} failed",uuid);
+            return;
+        }
+
+        boolean ifApplySuccess = TerraformUtil.terraformApply(aimDir);
+        if(!ifApplySuccess){
+            log.error("terraform apply {} failed",uuid);
+            return;
+        }
+
+        JSONObject applyResultJSON = TerraformUtil.terraformShow(aimDir);
+        JSONObject values = applyResultJSON.getJSONObject("values");
+        JSONObject outputs = values.getJSONObject("outputs");
+        JSONObject awsPublicIpObj = outputs.getJSONObject("public_ip");
+        String publicIp = awsPublicIpObj.getString("value");
+        resource.setPublicIp(publicIp);
+        resource.setResourceStatus(ResourceStatusEnum.RUNNING.getCode());
+
+        Date currentDate = new Date();
+        resource.setCreateTime(currentDate);
+
+        resourceMapper.insert(resource);
+
     }
 
     /**

@@ -118,10 +118,15 @@ public class ResourcePoolServiceImpl extends ServiceImpl<ResourcePoolMapper, Res
         if(resExist != null){
             return ResultConstant.DEPARTMENT_EXIST_RESOURCE_POOL;
         }
-        resourcePool.setResourcePoolType(requestDto.getResourceTypeCode());
+        resourcePool.setResourcePoolType(requestDto.getResourcePoolTypeCode());
         resourcePool.setCpuLimit(requestDto.getCpuLimit());
         resourcePool.setMemoryLimit(requestDto.getMemoryLimit());
         resourcePool.setDiskLimit(requestDto.getDiskLimit());
+        resourcePool.setDepartmentId(requestDto.getDepartmentId());
+        resourcePool.setCpuUsed(0);
+        resourcePool.setMemoryUsed(0);
+        resourcePool.setDiskUsed(0);
+        resourcePoolMapper.insert(resourcePool);
 
         return ResultConstant.SUCCESS;
     }

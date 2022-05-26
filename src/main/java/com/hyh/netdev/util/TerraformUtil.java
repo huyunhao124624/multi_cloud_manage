@@ -56,14 +56,16 @@ public class TerraformUtil {
         InputStream inputStream = process.getInputStream();
         InputStream errorStream = process.getErrorStream();
         BufferedReader inputReader = new BufferedReader(new InputStreamReader(inputStream));
-        BufferedReader errorReader = new BufferedReader(new InputStreamReader(errorStream));
+//        BufferedReader errorReader = new BufferedReader(new InputStreamReader(errorStream));
         String line = null;
-        while((line = inputReader.readLine())!=null){
+
+        while((line = inputReader.readLine())!=null ){
             log.info(line);
         }
-        while((line = errorReader.readLine())!=null){
-            log.info(line);
-        }
+//        while((line = errorReader.readLine())!=null){
+//            log.info(line);
+//        }
+
     }
 
     public static boolean terraformApply(File aimPath) throws IOException {
@@ -75,6 +77,7 @@ public class TerraformUtil {
         ProcessBuilder processBuilder = new ProcessBuilder(cmdList);
         processBuilder.directory(aimPath);
         processBuilder.command(cmdList);
+        processBuilder.redirectErrorStream(true);
 
         // processBuilder.command();
         Process p = processBuilder.start();
@@ -105,6 +108,7 @@ public class TerraformUtil {
         ProcessBuilder processBuilder = new ProcessBuilder(cmdList);
         processBuilder.directory(aimPath);
         processBuilder.command(cmdList);
+        processBuilder.redirectErrorStream(true);
         // processBuilder.command();
         Process p = processBuilder.start();
         logFromProcessStream(p);
