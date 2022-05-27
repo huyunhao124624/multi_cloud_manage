@@ -11,7 +11,7 @@
  Target Server Version : 50737
  File Encoding         : 65001
 
- Date: 10/05/2022 01:58:41
+ Date: 27/05/2022 19:35:17
 */
 
 SET NAMES utf8mb4;
@@ -33,6 +33,16 @@ CREATE TABLE `ami_meta`  (
 -- Records of ami_meta
 -- ----------------------------
 INSERT INTO `ami_meta` VALUES ('1', 'awsDefault', 'awsCloud', 'ami-005e54dee72cc1d00');
+INSERT INTO `ami_meta` VALUES ('10', 'centos7.9', 'aliCloud', 'centos_7_9_x64_20G_alibase_20220426.vhd');
+INSERT INTO `ami_meta` VALUES ('11', 'centos8.2', 'aliCloud', 'centos_8_2_x64_20G_alibase_20210712.vhd');
+INSERT INTO `ami_meta` VALUES ('2', 'ubuntu18', 'awsCloud', 'ami-005de95e8ff495156');
+INSERT INTO `ami_meta` VALUES ('3', 'ubumtu20', 'awsCloud', 'ami-0c4f7023847b90238');
+INSERT INTO `ami_meta` VALUES ('4', 'ubuntu18.04', 'huaweiCloud', 'a347c189-4d3a-4096-bd72-0ad2be959470');
+INSERT INTO `ami_meta` VALUES ('5', 'ubuntu20.04', 'huaweiCloud', '8bd0db1f-16cb-45dc-83b6-238b5810f654');
+INSERT INTO `ami_meta` VALUES ('6', 'CentOS7.9', 'huaweiCloud', 'd3c8947a-06cc-40a2-a43b-c0e53a6325c0');
+INSERT INTO `ami_meta` VALUES ('7', 'CentOS8.2', 'huaweiCloud', '5451b446-853c-464d-832c-22574957d06c');
+INSERT INTO `ami_meta` VALUES ('8', 'ubuntu16.04', 'aliCloud', 'ubuntu_16_04_x64_20G_alibase_20211028.vhd');
+INSERT INTO `ami_meta` VALUES ('9', 'ubuntu18.04', 'aliCloud', 'ubuntu_18_04_64_20G_alibase_20190624.vhd');
 
 -- ----------------------------
 -- Table structure for cart
@@ -86,6 +96,8 @@ INSERT INTO `department_user` VALUES (1, 270);
 INSERT INTO `department_user` VALUES (1, 271);
 INSERT INTO `department_user` VALUES (1, 272);
 INSERT INTO `department_user` VALUES (2, 273);
+INSERT INTO `department_user` VALUES (2, 274);
+INSERT INTO `department_user` VALUES (4, 275);
 
 -- ----------------------------
 -- Table structure for disk_meta
@@ -104,6 +116,8 @@ CREATE TABLE `disk_meta`  (
 -- Records of disk_meta
 -- ----------------------------
 INSERT INTO `disk_meta` VALUES (1, 0.01, '4', '1', 'awsCloud');
+INSERT INTO `disk_meta` VALUES (2, 0.01, '4', '1', 'huaweiCloud');
+INSERT INTO `disk_meta` VALUES (3, 0.01, '4', '1', 'aliCloud');
 
 -- ----------------------------
 -- Table structure for permission
@@ -232,7 +246,7 @@ CREATE TABLE `resource`  (
   `login_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   `password` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   PRIMARY KEY (`resource_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 10 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 12 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of resource
@@ -245,6 +259,8 @@ INSERT INTO `resource` VALUES (6, 270, 1, 1, 1, 'd744790ee29c417594cae168e3a835d
 INSERT INTO `resource` VALUES (7, 270, 1, 1, 1, '8cda8c6bc9b84cedb022ff50f1e1cee3', '2022-05-02 16:37:20', NULL, '0', 'awsCloud', 'RELEASED', '127.170.6.130', 0x504552534F4E414C5F50524956415445, 233, 'root', '8e2f30f3ad144a349a67d39ebbda1936');
 INSERT INTO `resource` VALUES (8, 270, 1, 1, 1, '356fb6f79e4b4dc7b1713195a7cbdce5', '2022-05-02 20:23:08', NULL, '0', 'awsCloud', 'RELEASED', '127.106.253.201', 0x504552534F4E414C5F50524956415445, 244, 'root', '7d1e4e7e85474c0ab63b8bf0517827ab');
 INSERT INTO `resource` VALUES (9, 270, 1, 1, 1, '87ed8cd942ab46dc9af32de2087bfaed', '2022-05-02 20:34:42', NULL, '0', 'awsCloud', 'RUNNING', '127.127.248.22', 0x504552534F4E414C5F50524956415445, 12, 'root', '72af3e27a62840f19079e20d4a03bcd8');
+INSERT INTO `resource` VALUES (10, 274, 2, 2, 2, 'd1cf830dd70349e59e66ca012ec0a01c', '2022-05-27 06:54:49', NULL, '0', 'huaweiCloud', 'RELEASED', '117.78.19.253', 0x4445504152544D454E545F5055424C4943, 10, 'root', 'PW1653605525046pw');
+INSERT INTO `resource` VALUES (11, 275, 3, 3, 4, '4d587193ac14459a9bb8e0aa720206e8', '2022-05-27 08:55:36', NULL, '0', 'aliCloud', 'RELEASED', '59.110.229.215', 0x4445504152544D454E545F5055424C4943, 20, 'root', 'PW1653612902514pw');
 
 -- ----------------------------
 -- Table structure for resource_pool
@@ -261,12 +277,14 @@ CREATE TABLE `resource_pool`  (
   `department_id` bigint(20) NULL DEFAULT NULL,
   `resource_pool_type` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   PRIMARY KEY (`resource_pool_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 9 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of resource_pool
 -- ----------------------------
 INSERT INTO `resource_pool` VALUES (20, 100, 0, 0, 40, 1024, 1, 1, 'awsCloud');
+INSERT INTO `resource_pool` VALUES (123, 1234, 0, 0, 0, 1234, 6, 2, 'huaweiCloud');
+INSERT INTO `resource_pool` VALUES (123, 123, 0, 0, 0, 1234, 7, 4, 'aliCloud');
 
 -- ----------------------------
 -- Table structure for role
@@ -508,7 +526,7 @@ CREATE TABLE `user`  (
   `profess` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '学院',
   `phone` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '手机号',
   PRIMARY KEY (`user_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 274 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 276 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of user
@@ -518,6 +536,8 @@ INSERT INTO `user` VALUES (270, '111', 'user1', 0, 'huyunhaode', NULL, '');
 INSERT INTO `user` VALUES (271, '111', 'user2', 0, 'huyunhaoge', NULL, '');
 INSERT INTO `user` VALUES (272, '111', 'test', 0, 'testhyh', NULL, '');
 INSERT INTO `user` VALUES (273, '111', 'test', 0, 'testhyh', NULL, '');
+INSERT INTO `user` VALUES (274, '111', 'fwtestld', 0, 'fwtestld', NULL, '');
+INSERT INTO `user` VALUES (275, '111', 'jjtestld', 0, 'jjtestld', NULL, '');
 
 -- ----------------------------
 -- Table structure for user_email
@@ -562,7 +582,7 @@ CREATE TABLE `user_role`  (
   `role_id` int(11) NOT NULL COMMENT '角色ID',
   `password` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '密码',
   PRIMARY KEY (`user_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 274 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 276 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of user_role
@@ -572,6 +592,8 @@ INSERT INTO `user_role` VALUES (270, 2, 'zx124624');
 INSERT INTO `user_role` VALUES (271, 1, 'zx124624');
 INSERT INTO `user_role` VALUES (272, 2, 'zx124624');
 INSERT INTO `user_role` VALUES (273, 2, 'zx124624');
+INSERT INTO `user_role` VALUES (274, 1, 'zx124624');
+INSERT INTO `user_role` VALUES (275, 1, 'zx124624');
 
 -- ----------------------------
 -- Table structure for user_trace
@@ -626,5 +648,15 @@ CREATE TABLE `vm_meta`  (
 -- Records of vm_meta
 -- ----------------------------
 INSERT INTO `vm_meta` VALUES (1, 2, 't2.micro', 'awsCloud', 1, 0.186, 77, 133, 256, 450, 600, 1000, 1500);
+INSERT INTO `vm_meta` VALUES (1, 2, 's2.medium.2', 'huaweiCloud', 2, 0.15, 20, 37, 72.2, 172.4, 258.6, 517.2, 862);
+INSERT INTO `vm_meta` VALUES (1, 2, 'ecs.n1.small', 'aliCloud', 3, 0.28, 25.67, 50, 94, 188, 282, 564, 958.8);
+INSERT INTO `vm_meta` VALUES (2, 4, 'ecs.n4.large', 'aliCloud', 4, 0.73, 60.39, 120, 218, 436, 654, 1308, 2223);
+INSERT INTO `vm_meta` VALUES (4, 8, 'ecs.n4.xlarge', 'aliCloud', 5, 1.44, 117.51, 230, 422, 844, 1266, 2532, 4304);
+INSERT INTO `vm_meta` VALUES (8, 16, 'ecs.n4.2xlarge', 'aliCloud', 6, 2.83, 231.75, 450, 830, 1660, 2490, 4980, 8466);
+INSERT INTO `vm_meta` VALUES (16, 32, 'ecs.n4.4xlarge', 'aliCloud', 7, 5.67, 460.23, 823, 1646, 3292, 4938, 9876, 16789);
+INSERT INTO `vm_meta` VALUES (2, 4, 's2.large.2', 'huaweiCloud', 8, 0.38, 55, 101, 196.2, 392.4, 588.6, 1177.2, 1962);
+INSERT INTO `vm_meta` VALUES (4, 8, 's2.xlarge.2', 'huaweiCloud', 9, 0.7996, 110, 200, 390, 780, 1170, 2340, 3900);
+INSERT INTO `vm_meta` VALUES (8, 16, 's2.2xlarge.2', 'huaweiCloud', 10, 1.57, 210, 400, 765.9, 1531.8, 2297.7, 4595.4, 7659);
+INSERT INTO `vm_meta` VALUES (16, 32, 's2.4xlarge.2', 'huaweiCloud', 11, 3.2796, 400, 800, 1576.9, 3153.8, 4730.7, 9461.4, 15769);
 
 SET FOREIGN_KEY_CHECKS = 1;

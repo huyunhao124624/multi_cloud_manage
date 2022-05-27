@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.update.Update;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.hyh.netdev.bo.*;
 import com.hyh.netdev.dto.AddAccountDto;
+import com.hyh.netdev.dto.DeleteAccountDto;
 import com.hyh.netdev.dto.UpdateAccountDto;
 import com.hyh.netdev.entity.User;
 import com.hyh.netdev.vo.MPage;
@@ -62,5 +63,7 @@ public interface UserService extends IService<User> {
     Result updateAccount(UpdateAccountDto requestDto);
 
     Result addAccount(AddAccountDto requestDto);
+
+    Result deleteAccountById(DeleteAccountDto deleteAccountDto);
 
 }

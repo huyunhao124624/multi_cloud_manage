@@ -4,6 +4,7 @@ package com.hyh.netdev.controller;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.hyh.netdev.bo.*;
 import com.hyh.netdev.dto.AddAccountDto;
+import com.hyh.netdev.dto.DeleteAccountDto;
 import com.hyh.netdev.dto.GetAccountListDto;
 import com.hyh.netdev.dto.UpdateAccountDto;
 import com.hyh.netdev.entity.UserRole;
@@ -93,6 +94,12 @@ public class UserController {
     public Result addAccount(@RequestBody AddAccountDto requestDto){
         return userService.addAccount(requestDto);
     }
+
+    @PostMapping("/api/user/deleteAccountById")
+    public Result deleteAccount(@RequestBody DeleteAccountDto requestDto){
+        return userService.deleteAccountById(requestDto);
+    }
+
 
 
 

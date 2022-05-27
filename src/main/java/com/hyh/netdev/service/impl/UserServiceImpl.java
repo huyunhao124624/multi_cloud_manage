@@ -2,6 +2,7 @@ package com.hyh.netdev.service.impl;
 
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.Update;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -10,6 +11,7 @@ import com.hyh.netdev.bo.*;
 import com.hyh.netdev.constant.ResultConstant;
 import com.hyh.netdev.dao.*;
 import com.hyh.netdev.dto.AddAccountDto;
+import com.hyh.netdev.dto.DeleteAccountDto;
 import com.hyh.netdev.dto.UpdateAccountDto;
 import com.hyh.netdev.entity.*;
 import com.hyh.netdev.enums.RoleEnum;
@@ -359,6 +361,16 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         departmentUser.setDepartmentId(requestDto.getDepartmentId());
         departmentUserMapper.insert(departmentUser);
 
+        return ResultConstant.SUCCESS;
+    }
+
+    @Override
+    @Transactional
+    public Result deleteAccountById(DeleteAccountDto deleteAccountDto) {
+        Integer userId = deleteAccountDto.getUserId();
+        userRoleMapper.delete(new UpdateWrapper<UserRole>().eq("user_id",userId));
+        departmentUserMapper.delete(new UpdateWrapper<DepartmentUser>().eq("user_id",userId));
+        userMapper.deleteById(userId);
         return ResultConstant.SUCCESS;
     }
 
