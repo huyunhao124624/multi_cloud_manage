@@ -55,8 +55,11 @@ public class ResourceServiceImpl implements ResourceService {
 
     private static String awsLocalFilePath = "terraform_template/aws/aws_local.tf";
     private static String hwFilePath = "terraform_template/hw/hw_cloud.tf";
+    private static String aliFilePath = "terraform_template/ali/ali_cloud.tf";
+
     private static String AWS_FILE_NAME = "aws.tf";
     private static String HW_FILE_NAME = "hw_cloud.tf";
+    private static String ALI_FILE_NAME = "ali_cloud.tf";
 
 
 
@@ -243,7 +246,70 @@ public class ResourceServiceImpl implements ResourceService {
             this.handleAWSApply(uuid,instanceType,diskSize,amiOutId,resource);
         }else if(StringUtils.equals(CloudProviderEnum.HUAWEICLOUD.getCode(),cloudProvider)){
             this.handleHWApply(uuid,instanceType,diskSize,amiOutId,resource);
+        }else if(StringUtils.equals(CloudProviderEnum.ALICLOUD.getCode(),cloudProvider)){
+            this.handleAliApply(uuid,instanceType,diskSize,amiOutId,resource);
         }
+    }
+
+    private void handleAliApply(String uuid,String instanceType,Integer diskSize,String amiOutId,Resource resource) throws IOException{
+        String loginName = "root";
+        String password = "PW"+System.currentTimeMillis()+"pw";
+        resource.setLoginName(loginName);
+        resource.setPassword(password);
+
+        File file = ResourceUtils.getFile("classpath:"+aliFilePath);
+        String templateString = TerraformUtil.txt2String(file);
+
+        Map<String,String> replaceMap = new HashMap<>();
+        replaceMap.put("amiOutId",amiOutId);
+        replaceMap.put("instanceType",instanceType);
+        replaceMap.put("diskName", "ali_disk_"+uuid);
+        replaceMap.put("diskSize",diskSize+"");
+        replaceMap.put("rootPassword",password);
+
+        replaceMap.put("aliVpcName", "ali_vpc_"+uuid);
+        replaceMap.put("aliInstanceName","ali_instance_"+uuid);
+        replaceMap.put("aliVswitchName","ali_vswitch_name_"+uuid);
+
+        StringSubstitutor stringSubstitutor = new StringSubstitutor(replaceMap);
+        String formatTemplateString = stringSubstitutor.replace(templateString);
+
+        File aimDir = new File(tfBasePath+"\\"+uuid);
+        aimDir.mkdir();
+        File f = new File(aimDir.getAbsoluteFile() + "\\"+ALI_FILE_NAME);
+        f.createNewFile();
+
+        if(f.exists()){
+            FileWriter fw = new FileWriter(f);
+            fw.append(formatTemplateString);
+            fw.close();
+        }
+
+        boolean ifInitSuccess = TerraformUtil.terraformInit(aimDir);
+        if(!ifInitSuccess){
+            log.error("terraform init {} failed",uuid);
+            return;
+        }
+
+        boolean ifApplySuccess = TerraformUtil.terraformApply(aimDir);
+        if(!ifApplySuccess){
+            log.error("terraform apply {} failed",uuid);
+            return;
+        }
+
+        JSONObject applyResultJSON = TerraformUtil.terraformShow(aimDir);
+        JSONObject values = applyResultJSON.getJSONObject("values");
+        JSONObject outputs = values.getJSONObject("outputs");
+        JSONObject awsPublicIpObj = outputs.getJSONObject("public_ip");
+        String publicIp = awsPublicIpObj.getString("value");
+        resource.setPublicIp(publicIp);
+        resource.setResourceStatus(ResourceStatusEnum.RUNNING.getCode());
+
+        Date currentDate = new Date();
+        resource.setCreateTime(currentDate);
+
+        resourceMapper.insert(resource);
+
     }
 
     private void handleHWApply(String uuid,String instanceType,Integer diskSize,String amiOutId,Resource resource) throws IOException {
